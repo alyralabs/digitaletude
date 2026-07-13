@@ -5,7 +5,6 @@ import { Play } from '@primeicons/react/play'
 import { Button } from '@/components/ui/button'
 import PageSection from '../components/PageSection'
 import { apiFetch } from '../lib/api'
-import { starWarsQuotes } from '../lib/placeholder'
 import type { MusicMetadata, MusicPayload, Track } from '../lib/types'
 
 export async function loader() {
@@ -41,12 +40,7 @@ export default function Music() {
 
   return (
     <div className="space-y-10">
-      <div className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight text-color">Music</h1>
-        <p className="max-w-2xl text-lg leading-relaxed text-muted-color">
-          {starWarsQuotes.falcon}
-        </p>
-      </div>
+      <h1 className="text-4xl font-bold tracking-tight text-color">Music</h1>
 
       {/* One shared player: swapping `src` here avoids multiple audio
           elements playing simultaneously, since there's no browser-level

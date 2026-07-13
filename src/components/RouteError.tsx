@@ -1,8 +1,14 @@
-import { isRouteErrorResponse, useRouteError } from 'react-router'
+import {
+  isRouteErrorResponse,
+  useRevalidator,
+  useRouteError,
+} from 'react-router'
+import { Button } from '@/components/ui/button'
 
 export default function RouteError() {
   const error = useRouteError()
   const notFound = isRouteErrorResponse(error) && error.status === 404
+  const { revalidate } = useRevalidator()
 
   return (
     <div className="space-y-4 py-16 text-center">
@@ -14,6 +20,11 @@ export default function RouteError() {
           ? 'That page does not exist.'
           : 'Could not load this page. Try again in a moment.'}
       </p>
+      {!notFound && (
+        <Button size="small" onClick={() => revalidate()}>
+          Retry
+        </Button>
+      )}
     </div>
   )
 }
