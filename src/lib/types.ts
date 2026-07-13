@@ -46,3 +46,27 @@ export type MusicPayload = {
   albums: Album[]
   singles: Track[]
 }
+
+export type PostStatus = 'draft' | 'published'
+
+export type Post = {
+  id: string
+  slug: string
+  title: string
+  excerpt: string
+  contentMarkdown: string
+  status: PostStatus
+  createdAt: string
+  updatedAt: string
+  publishedAt: string | null
+  coverUrl: string | null
+}
+
+// Thin shape returned by the public list endpoint (no contentMarkdown).
+export type PostSummary = {
+  title: string
+  slug: string
+  excerpt: string
+  coverUrl: string | null
+  publishedAt: string | null
+}

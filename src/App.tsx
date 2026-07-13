@@ -10,14 +10,17 @@ import MusicAdmin, {
 import PhotosAdmin, {
   loader as photosAdminLoader,
 } from './pages/admin/PhotosAdmin'
-import Blog from './pages/Blog'
+import PostEditor, {
+  loader as postEditorLoader,
+} from './pages/admin/PostEditor'
+import PostsAdmin, {
+  loader as postsAdminLoader,
+} from './pages/admin/PostsAdmin'
+import Blog, { loader as blogLoader } from './pages/Blog'
+import BlogPost, { loader as blogPostLoader } from './pages/BlogPost'
 import Home from './pages/Home'
 import Music, { loader as musicLoader } from './pages/Music'
 import Photography, { loader as photographyLoader } from './pages/Photography'
-
-function AdminStub() {
-  return <p className="text-muted-color">Not built yet — next cycle.</p>
-}
 
 const router = createBrowserRouter([
   {
@@ -39,7 +42,18 @@ const router = createBrowserRouter([
         loader: musicLoader,
         errorElement: <RouteError />,
       },
-      { path: 'blog', element: <Blog /> },
+      {
+        path: 'blog',
+        element: <Blog />,
+        loader: blogLoader,
+        errorElement: <RouteError />,
+      },
+      {
+        path: 'blog/:slug',
+        element: <BlogPost />,
+        loader: blogPostLoader,
+        errorElement: <RouteError />,
+      },
       { path: 'admin/login', element: <AdminLogin /> },
       {
         path: 'admin',
@@ -60,7 +74,24 @@ const router = createBrowserRouter([
             loader: musicAdminLoader,
             errorElement: <RouteError />,
           },
-          { path: 'posts', element: <AdminStub /> },
+          {
+            path: 'posts',
+            element: <PostsAdmin />,
+            loader: postsAdminLoader,
+            errorElement: <RouteError />,
+          },
+          {
+            path: 'posts/new',
+            element: <PostEditor />,
+            loader: postEditorLoader,
+            errorElement: <RouteError />,
+          },
+          {
+            path: 'posts/:id',
+            element: <PostEditor />,
+            loader: postEditorLoader,
+            errorElement: <RouteError />,
+          },
         ],
       },
     ],
