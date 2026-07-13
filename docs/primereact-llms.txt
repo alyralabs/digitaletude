@@ -1,0 +1,388 @@
+# PrimeReact
+
+## Docs
+
+- [LLMs.txt](https://www.primereact.org/docs/headless/llms.md): LLMs.txt is a file that contains the LLMs for the PrimeReact documentation.
+- [LLMs.txt](https://www.primereact.org/docs/primitive/llms.md): LLMs.txt is a file that contains the LLMs for the PrimeReact documentation.
+- [LLMs.txt](https://www.primereact.org/docs/tailwind/llms.md): LLMs.txt is a file that contains the LLMs for the PrimeReact documentation.
+- [Add-Ons](https://www.primereact.org/docs/headless/add-ons/introduction.md): Premium templates, UI blocks and design tooling that build on top of PrimeReact.
+- [Installation](https://www.primereact.org/docs/headless/guides/installation.md): Install the headless package and start using hooks in your React project.
+- [Headless](https://www.primereact.org/docs/headless/guides/introduction.md): React hooks that handle logic and accessibility. You bring your own markup and styles.
+- [Resources](https://www.primereact.org/docs/headless/resources/introduction.md): Support channels, legacy versions and places to discover more about PrimeReact.
+- [Introduction](https://www.primereact.org/docs/hooks/gettingstarted/introduction.md): A standalone collection of React hooks from @primereact/hooks.
+- [Setup](https://www.primereact.org/docs/hooks/gettingstarted/setup.md): Install @primereact/hooks and start using it in any React project.
+- [useAttrSelector](https://www.primereact.org/docs/hooks/use-attr-selector.md): Produce a stable, unique string from React.useId, handy for scoping CSS and DOM selectors.
+- [useControlledState](https://www.primereact.org/docs/hooks/use-controlled-state.md): State that works controlled or uncontrolled, following the React convention of value + onChange with a defaultValue fallback.
+- [useEventListener](https://www.primereact.org/docs/hooks/use-event-listener.md): Attach DOM event listeners declaratively, with automatic cleanup and a bind/unbind pair for manual control.
+- [useFilter](https://www.primereact.org/docs/hooks/use-filter.md): Generic filter hook for flat collections, with built-in match modes, accent-insensitive matching, locale support, and custom matcher registration.
+- [useHotKey](https://www.primereact.org/docs/hooks/use-hot-key.md): Bind keyboard shortcuts with modifier combinations, single key or array of keys, with enable flag for scoping.
+- [useId](https://www.primereact.org/docs/hooks/use-id.md): Stable unique identifier with an optional explicit override.
+- [useIntersectionObserver](https://www.primereact.org/docs/hooks/use-intersection-observer.md): A thin wrapper over the IntersectionObserver API with imperative observe/unobserve controls.
+- [useIsMobile](https://www.primereact.org/docs/hooks/use-is-mobile.md): Boolean flag that flips when the viewport crosses a mobile breakpoint.
+- [useKeyFilter](https://www.primereact.org/docs/hooks/use-key-filter.md): Block individual keystrokes that don't match a pattern, before they reach the input.
+- [useLocalStorage](https://www.primereact.org/docs/hooks/use-local-storage.md): State persisted to localStorage, with SSR-safe hydration and custom serialization.
+- [useMask](https://www.primereact.org/docs/hooks/use-mask.md): Format an input as the user types, phone, date, currency and similar fixed patterns.
+- [useMountEffect](https://www.primereact.org/docs/hooks/use-mount-effect.md): Run an effect exactly once, after the first render.
+- [useMatchMedia](https://www.primereact.org/docs/hooks/use-match-media.md): Reactive boolean for any CSS media query.
+- [useMounted](https://www.primereact.org/docs/hooks/use-mounted.md): SSR-safe flag that flips to true once the component mounts on the client.
+- [useNumberFormatter](https://www.primereact.org/docs/hooks/use-number-formatter.md): Locale-aware number formatting and parsing built on Intl.NumberFormat, decimal or currency, with custom prefix/suffix and rounding.
+- [usePresence](https://www.primereact.org/docs/hooks/use-presence.md): Coordinate enter/exit animations by delaying unmount until CSS transitions finish.
+- [usePrevious](https://www.primereact.org/docs/hooks/use-previous.md): Remember the value of a variable from the previous render.
+- [useProps](https://www.primereact.org/docs/hooks/use-props.md): Split incoming props into known props and extra attrs, preserving referential stability when values don't change.
+- [useQueueTask](https://www.primereact.org/docs/hooks/use-queue-task.md): Deduplicate work by id and flush it on the next microtask.
+- [useScrollTop](https://www.primereact.org/docs/hooks/use-scrolltop.md): useScrollTop is a hook that provides a way to scroll to the top of a container.
+- [useSortableList](https://www.primereact.org/docs/hooks/use-sortable-list.md): Reorder items in a list, optionally transfer them between lists, with state and handlers you spread onto your own DOM.
+- [useTreeFilter](https://www.primereact.org/docs/hooks/use-tree-filter.md): Filter hook for hierarchical data. Lenient or strict branch matching.
+- [useUnmountEffect](https://www.primereact.org/docs/hooks/use-unmount-effect.md): Run an effect exactly once, when the component unmounts.
+- [useUpdateEffect](https://www.primereact.org/docs/hooks/use-update-effect.md): useEffect that skips the initial mount and runs only on subsequent dependency changes.
+- [useViewTransition](https://www.primereact.org/docs/hooks/use-view-transition.md): Wrap state updates in the View Transitions API, with a graceful fallback on unsupported browsers.
+- [useVisibilityChange](https://www.primereact.org/docs/hooks/use-visibility-change.md): Reactive boolean that reflects the document's Page Visibility state.
+- [Add-Ons](https://www.primereact.org/docs/primitive/add-ons/introduction.md): Premium templates, UI blocks and design tooling that build on top of PrimeReact.
+- [Installation](https://www.primereact.org/docs/primitive/guides/installation.md): Install the primitive package and compose unstyled components in your React project.
+- [Primitive](https://www.primereact.org/docs/primitive/guides/introduction.md): Unstyled React components with composable subcomponents. Behavior included, styling up to you.
+- [Resources](https://www.primereact.org/docs/primitive/resources/introduction.md): Support channels, legacy versions and places to discover more about PrimeReact.
+- [Add-Ons](https://www.primereact.org/docs/styled/add-ons/introduction.md): Premium templates, UI blocks and design tooling that build on top of PrimeReact.
+- [Configuration](https://www.primereact.org/docs/styled/guides/configuration.md): Application wide configuration for PrimeReact.
+- [Styled](https://www.primereact.org/docs/styled/guides/introduction.md): Pre-themed React components built on top of the headless layer. Drop them in and they look good out of the box.
+- [Resources](https://www.primereact.org/docs/styled/resources/introduction.md): Support channels, legacy versions and places to discover more about PrimeReact.
+- [Add-Ons](https://www.primereact.org/docs/tailwind/add-ons/introduction.md): Premium templates, UI blocks and design tooling that build on top of PrimeReact.
+- [Tailwind](https://www.primereact.org/docs/tailwind/guides/introduction.md): Copy-paste React components styled with Tailwind CSS. Own the code, customize everything.
+- [Resources](https://www.primereact.org/docs/tailwind/resources/introduction.md): Support channels, legacy versions and places to discover more about PrimeReact.
+- [useAccordion](https://www.primereact.org/docs/headless/components/accordion.md): Hooks that manage accordion state, keyboard navigation, and ARIA attributes.
+- [useAnimateOnScroll](https://www.primereact.org/docs/headless/components/animateonscroll.md): Hook that applies enter and leave CSS animations to elements based on viewport intersection.
+- [useAutoComplete](https://www.primereact.org/docs/headless/components/autocomplete.md): Hook that manages autocomplete state, search callbacks, and popup positioning for combobox inputs.
+- [useAvatar](https://www.primereact.org/docs/headless/components/avatar.md): Hooks that manage avatar image loading state and group layout.
+- [useBadge](https://www.primereact.org/docs/headless/components/badge.md): Hook that provides data attributes and prop spreading for badge elements.
+- [useBreadcrumb](https://www.primereact.org/docs/headless/components/breadcrumb.md): Hook that provides semantic ARIA attributes and data attributes for breadcrumb navigation.
+- [useButton](https://www.primereact.org/docs/headless/components/button.md): Hook that provides data attributes and prop spreading for button elements.
+- [useCard](https://www.primereact.org/docs/headless/components/card.md): Headless hook for building flexible card containers with custom markup.
+- [useCarousel](https://www.primereact.org/docs/headless/components/carousel.md): Hook that manages carousel scroll snapping, swipe gestures, and page-based navigation.
+- [useCheckbox](https://www.primereact.org/docs/headless/components/checkbox.md): Hooks that manage checkbox and checkbox group state, indeterminate logic, and ARIA attributes.
+- [useChip](https://www.primereact.org/docs/headless/components/chip.md): Headless hook for building removable chip elements with custom markup.
+- [useCollapsible](https://www.primereact.org/docs/headless/components/collapsible.md): Hook that manages open/close state, toggle behavior, and ARIA attributes for collapsible content.
+- [useCompare](https://www.primereact.org/docs/headless/components/compare.md): Hook that manages compare slider state, pointer interactions, and clip-path positioning.
+- [useContextMenu](https://www.primereact.org/docs/headless/components/contextmenu.md): Hooks that manage context menu state, right-click positioning, keyboard navigation, and submenu coordination.
+- [useDataTable](https://www.primereact.org/docs/headless/components/datatable.md): Hook that manages tabular data with sort, filter, pagination, selection, expansion, editing, column/row reorder, resize, and tree-mode flattening.
+- [useDataView](https://www.primereact.org/docs/headless/components/dataview.md): Hook that manages layout state and provides a locale-aware sort utility for data presentation.
+- [useDatePicker](https://www.primereact.org/docs/headless/components/datepicker.md): Hook that manages date picker state, calendar navigation, view switching, and popup positioning.
+- [useDialog](https://www.primereact.org/docs/headless/components/dialog.md): Hook that manages dialog open/close state, focus trapping, dragging, scroll lock, and z-index layering.
+- [useDivider](https://www.primereact.org/docs/headless/components/divider.md): Headless hook for building content separators with custom markup.
+- [useDrawer](https://www.primereact.org/docs/headless/components/drawer.md): Hook that manages slide-in panel overlays with focus trap, scroll lock, and dismissable backdrop.
+- [useFieldset](https://www.primereact.org/docs/headless/components/fieldset.md): Hook that manages collapsible fieldset state and ARIA attributes.
+- [useFileUpload](https://www.primereact.org/docs/headless/components/fileupload.md): Hook that manages file selection, validation, upload progress, and drag-and-drop state.
+- [useFloatLabel](https://www.primereact.org/docs/headless/components/floatlabel.md): Hook that coordinates an input and a floating label with focus and value state.
+- [useFluid](https://www.primereact.org/docs/headless/components/fluid.md): Hook that propagates fluid sizing context to descendant form components.
+- [FocusTrap](https://www.primereact.org/docs/headless/components/focustrap.md): Headless hook for trapping keyboard focus within a container element.
+- [useGallery](https://www.primereact.org/docs/headless/components/gallery.md): Hook that manages image gallery navigation, zoom, rotation, flip, and fullscreen state.
+- [useIconField](https://www.primereact.org/docs/headless/components/iconfield.md): Hook that positions an icon inside an input field boundary.
+- [useIftaLabel](https://www.primereact.org/docs/headless/components/iftalabel.md): Hook that positions a top-aligned label inside the input field boundary.
+- [useInplace](https://www.primereact.org/docs/headless/components/inplace.md): Hook that manages inline display-to-edit toggling with keyboard and state support.
+- [useInputColor](https://www.primereact.org/docs/headless/components/inputcolor.md): Hook that manages color selection state, 2D area interaction, channel sliders, and accessible color input behavior.
+- [useInputGroup](https://www.primereact.org/docs/headless/components/inputgroup.md): Hook that composes input fields with adjacent addon elements.
+- [useInputNumber](https://www.primereact.org/docs/headless/components/inputnumber.md): Hook that manages numeric input with formatting, locale support, and spin button behavior.
+- [useInputOtp](https://www.primereact.org/docs/headless/components/inputotp.md): Hook that manages OTP input state, focus navigation, and keyboard handling.
+- [useInputPassword](https://www.primereact.org/docs/headless/components/inputpassword.md): Hook that manages password input with mask toggling and controlled or uncontrolled value state.
+- [useInputTags](https://www.primereact.org/docs/headless/components/inputtags.md): Hook that manages tag input state and keyboard navigation between chips.
+- [useInputText](https://www.primereact.org/docs/headless/components/inputtext.md): Hook that provides data attributes and prop spreading for text input elements.
+- [useKnob](https://www.primereact.org/docs/headless/components/knob.md): Hook that manages circular dial state, SVG arc computation, and keyboard/mouse/touch interaction.
+- [useLabel](https://www.primereact.org/docs/headless/components/label.md): Hook that associates a label with an input control via id and htmlFor.
+- [useListbox](https://www.primereact.org/docs/headless/components/listbox.md): Hook that manages listbox selection state, keyboard navigation, and option search.
+- [useMenu](https://www.primereact.org/docs/headless/components/menu.md): Hook that manages menu state, keyboard navigation, focus tracking, and submenu coordination.
+- [useMessage](https://www.primereact.org/docs/headless/components/message.md): Hook that manages message visibility with auto-close timer and close callback.
+- [useMeterGroup](https://www.primereact.org/docs/headless/components/metergroup.md): Hook that manages meter value aggregation and percentage calculation within a defined range.
+- [useMotion](https://www.primereact.org/docs/headless/components/motion.md): Hook that manages enter/leave animations with CSS class transitions and visibility control.
+- [useNavigationMenu](https://www.primereact.org/docs/headless/components/navigationmenu.md): Hook that coordinates multiple useMenu instances inside a horizontal navigation bar with sibling traversal and single-open-at-a-time behavior.
+- [useOrderList](https://www.primereact.org/docs/headless/components/orderlist.md): A headless hook that manages list ordering with selection-based controls and optional drag-and-drop support.
+- [useOrganizationChart](https://www.primereact.org/docs/headless/components/organizationchart.md): Headless org-chart hook that manages collapse and selection state.
+- [usePaginator](https://www.primereact.org/docs/headless/components/paginator.md): Hook that manages pagination state, page calculations, and accessible navigation prop objects.
+- [usePanel](https://www.primereact.org/docs/headless/components/panel.md): Hook that manages collapsible panel state and ARIA attributes.
+- [usePickList](https://www.primereact.org/docs/headless/components/picklist.md): A headless hook that manages two lists with transfer, reorder, and optional drag-and-drop between them.
+- [usePopover](https://www.primereact.org/docs/headless/components/popover.md): Hook that manages popover open state, outside click dismissal, escape key handling, and focus management.
+- [usePortal](https://www.primereact.org/docs/headless/components/portal.md): Hook that tracks client-side mount state for SSR-safe portal rendering.
+- [usePositioner](https://www.primereact.org/docs/headless/components/positioner.md): Hook that positions a floating element relative to an anchor with automatic flip, shift, and arrow support.
+- [useProgressBar](https://www.primereact.org/docs/headless/components/progressbar.md): Hook that normalizes progress values to a percentage range and provides ARIA attributes.
+- [useProgressSpinner](https://www.primereact.org/docs/headless/components/progressspinner.md): Hook that manages circular progress state, SVG geometry computation, and determinate/indeterminate modes.
+- [useRadioButton](https://www.primereact.org/docs/headless/components/radiobutton.md): Hooks that manage radio button and radio button group state, checked logic, and ARIA attributes.
+- [useRating](https://www.primereact.org/docs/headless/components/rating.md): Hooks that manage rating state, hover interactions, and value resolution for star-based selection input.
+- [useScrollArea](https://www.primereact.org/docs/headless/components/scrollarea.md): Hook that manages custom scrollbar state, overflow detection, and handle positioning.
+- [useSelect](https://www.primereact.org/docs/headless/components/select.md): Hook that manages select dropdown state, keyboard navigation, and popup positioning.
+- [useSidebar](https://www.primereact.org/docs/headless/components/sidebar.md): Headless hooks for managing sidebar state, collapse behavior, layout coordination, and collapsible menu items.
+- [useSkeleton](https://www.primereact.org/docs/headless/components/skeleton.md): Hook that provides data attributes for building custom placeholder loading elements.
+- [useSlider](https://www.primereact.org/docs/headless/components/slider.md): Hook that manages slider state, pointer dragging, and accessible range input behavior.
+- [useSpeedDial](https://www.primereact.org/docs/headless/components/speeddial.md): Hook that manages speed dial state, keyboard navigation, and directional positioning.
+- [useSplitter](https://www.primereact.org/docs/headless/components/splitter.md): Hook that manages resizable panel layout with keyboard navigation and pointer-based resizing.
+- [useStepper](https://www.primereact.org/docs/headless/components/stepper.md): A hook that manages stepper state, step navigation, and ARIA attributes.
+- [useStyleClass](https://www.primereact.org/docs/headless/components/styleclass.md): Hook that manages CSS class toggling with enter/leave animation sequences on a target element.
+- [useTabs](https://www.primereact.org/docs/headless/components/tabs.md): Hook that manages tab selection state, keyboard navigation, and scrollable overflow.
+- [useTag](https://www.primereact.org/docs/headless/components/tag.md): Hook that provides data attributes for building custom categorization labels.
+- [useTerminal](https://www.primereact.org/docs/headless/components/terminal.md): Hook that manages command execution, input state, and command history for a terminal-style interface.
+- [useTextarea](https://www.primereact.org/docs/headless/components/textarea.md): Hook that provides auto-resize logic and data attributes for textarea elements.
+- [useTimeline](https://www.primereact.org/docs/headless/components/timeline.md): Hook that provides data attributes for alignment and orientation of timeline layouts.
+- [useToast](https://www.primereact.org/docs/headless/components/toast.md): Hooks that manage toast notification state, swipe dismissal, auto-timeout, and stacking behavior.
+- [useToggleButton](https://www.primereact.org/docs/headless/components/togglebutton.md): Hooks that manage toggle button pressed state and group value selection with single or multiple modes.
+- [useToggleSwitch](https://www.primereact.org/docs/headless/components/toggleswitch.md): Hook that manages toggle switch state, checked/unchecked logic, and ARIA attributes.
+- [useToolbar](https://www.primereact.org/docs/headless/components/toolbar.md): Headless hook for building toolbar containers with custom markup.
+- [useTooltip](https://www.primereact.org/docs/headless/components/tooltip.md): Hook that manages tooltip open state, hover/focus triggers, delay timing, and group transitions.
+- [useTree](https://www.primereact.org/docs/headless/components/tree.md): Headless tree hook that manages expansion, selection, keyboard and drag-drop state.
+- [useTreeTable](https://www.primereact.org/docs/headless/components/treetable.md): Hierarchical data table built on useDataTable with treeMode enabled, sort, filter, paginate, select, expand, and edit tree-shaped data.
+- [LLMs.txt](https://www.primereact.org/docs/headless/guides/ai/llms.md): LLMs.txt is a file that contains the LLMs for the PrimeReact documentation.
+- [Accessibility](https://www.primereact.org/docs/headless/guides/misc/accessibility.md): PrimeReact has WCAG level compliance, refer to the accessibility documentation of each component for detailed information.
+- [LLMs.txt](https://www.primereact.org/docs/primitive/guides/ai/llms.md): LLMs.txt is a file that contains the LLMs for the PrimeReact documentation.
+- [Custom Icons](https://www.primereact.org/docs/primitive/guides/icons/customicons.md): PrimeReact components can be used with any icon library using the templating features.
+- [Prime Icons](https://www.primereact.org/docs/primitive/guides/icons/primeicons.md): PrimeIcons is the default icon library of PrimeReact with over 250 open source icons developed by PrimeTek. PrimeIcons library is optional as PrimeReact components can use any icon with templating.
+- [Accessibility](https://www.primereact.org/docs/primitive/guides/misc/accessibility.md): PrimeReact has WCAG level compliance, refer to the accessibility documentation of each component for detailed information.
+- [Pass Through](https://www.primereact.org/docs/primitive/guides/misc/passthrough.md): The Pass Through attributes is an API to access the internal DOM Structure of the components.
+- [RTL Support](https://www.primereact.org/docs/primitive/guides/misc/rtl.md): Right-to-left direction support of PrimeReact.
+- [Accordion](https://www.primereact.org/docs/primitive/components/accordion.md): An unstyled, accessible accordion component with compound composition.
+- [AnimateOnScroll](https://www.primereact.org/docs/primitive/components/animateonscroll.md): An unstyled component that applies CSS animations to elements entering or leaving the viewport.
+- [AutoComplete](https://www.primereact.org/docs/primitive/components/autocomplete.md): An unstyled autocomplete input component with real-time search, keyboard navigation, and popup positioning.
+- [Avatar](https://www.primereact.org/docs/primitive/components/avatar.md): An unstyled avatar component with compound composition and group support.
+- [Badge](https://www.primereact.org/docs/primitive/components/badge.md): An unstyled badge component for displaying status indicators.
+- [Breadcrumb](https://www.primereact.org/docs/primitive/components/breadcrumb.md): An unstyled breadcrumb component for building navigational hierarchies with full control over layout and styling.
+- [Button](https://www.primereact.org/docs/primitive/components/button.md): An unstyled button component with compound composition and group support.
+- [ButtonGroup](https://www.primereact.org/docs/primitive/components/buttongroup.md): An unstyled container that groups related buttons into a single connected unit.
+- [Card](https://www.primereact.org/docs/primitive/components/card.md): An unstyled, flexible container component with compound composition.
+- [Carousel](https://www.primereact.org/docs/primitive/components/carousel.md): An unstyled, accessible carousel component with compound composition.
+- [Checkbox](https://www.primereact.org/docs/primitive/components/checkbox.md): An unstyled, accessible checkbox component with compound composition and group support.
+- [CheckboxGroup](https://www.primereact.org/docs/primitive/components/checkboxgroup.md): An unstyled container that groups multiple checkboxes and manages their shared value array.
+- [Chip](https://www.primereact.org/docs/primitive/components/chip.md): An unstyled chip component with compound composition for representing entities.
+- [Collapsible](https://www.primereact.org/docs/primitive/components/collapsible.md): An unstyled collapsible component for building expand/collapse interfaces with full control over layout and styling.
+- [Compare](https://www.primereact.org/docs/primitive/components/compare.md): An unstyled, accessible before/after comparison component with compound composition.
+- [ContextMenu](https://www.primereact.org/docs/primitive/components/contextmenu.md): An unstyled, accessible context menu component with compound composition for right-click actions.
+- [DataTable](https://www.primereact.org/docs/primitive/components/datatable.md): An unstyled data table with sort, filter, pagination, selection, expansion, editing, column reorder/resize, row reorder, grouping, frozen sections, CSV export, and tree mode.
+- [DataView](https://www.primereact.org/docs/primitive/components/dataview.md): An unstyled data container component for building list and grid layouts with full control over presentation.
+- [DatePicker](https://www.primereact.org/docs/primitive/components/datepicker.md): An unstyled date picker component with calendar navigation, view switching, and time selection.
+- [Dialog](https://www.primereact.org/docs/primitive/components/dialog.md): An unstyled modal dialog component with built-in focus trap, scroll lock, drag support, and dismissable backdrop.
+- [Divider](https://www.primereact.org/docs/primitive/components/divider.md): An unstyled separator component for horizontal and vertical content division.
+- [Drawer](https://www.primereact.org/docs/primitive/components/drawer.md): An unstyled slide-in panel component with built-in focus trap, scroll lock, and dismissable backdrop.
+- [Fieldset](https://www.primereact.org/docs/primitive/components/fieldset.md): An unstyled, accessible fieldset component with semantic legend and optional collapsible content.
+- [FloatLabel](https://www.primereact.org/docs/primitive/components/floatlabel.md): An unstyled wrapper that visually integrates a label with its form element.
+- [FileUpload](https://www.primereact.org/docs/primitive/components/fileupload.md): An unstyled file upload component with drag-and-drop, validation, and progress tracking.
+- [FocusTrap](https://www.primereact.org/docs/primitive/components/focustrap.md): An unstyled component that traps keyboard focus within its container.
+- [Gallery](https://www.primereact.org/docs/primitive/components/gallery.md): An unstyled, accessible gallery component with compound composition.
+- [IconField](https://www.primereact.org/docs/primitive/components/iconfield.md): An unstyled compound component that wraps an input together with an icon.
+- [IftaLabel](https://www.primereact.org/docs/primitive/components/iftalabel.md): An unstyled wrapper that creates an infield top-aligned label for its form element.
+- [Inplace](https://www.primereact.org/docs/primitive/components/inplace.md): An unstyled, accessible inline editing component with compound composition.
+- [InputColor](https://www.primereact.org/docs/primitive/components/inputcolor.md): An unstyled, accessible color picker component with compound composition.
+- [InputNumber](https://www.primereact.org/docs/primitive/components/inputnumber.md): An unstyled numeric input with formatting, locale support, and spin button behavior.
+- [InputOtp](https://www.primereact.org/docs/primitive/components/inputotp.md): An unstyled OTP input component with automatic focus management and keyboard navigation.
+- [InputPassword](https://www.primereact.org/docs/primitive/components/inputpassword.md): An unstyled password input with mask toggling and controlled or uncontrolled value state.
+- [InputTags](https://www.primereact.org/docs/primitive/components/inputtags.md): An unstyled tag input component with keyboard navigation, delimiter support, and optional typeahead suggestions.
+- [InputText](https://www.primereact.org/docs/primitive/components/inputtext.md): An unstyled text input component with data attributes and native input semantics.
+- [Knob](https://www.primereact.org/docs/primitive/components/knob.md): An unstyled circular dial component for numeric input with SVG-based rendering.
+- [Label](https://www.primereact.org/docs/primitive/components/label.md): An unstyled, accessible label element for form controls.
+- [Listbox](https://www.primereact.org/docs/primitive/components/listbox.md): An unstyled listbox component with keyboard navigation, type-ahead search, and single or multiple selection.
+- [Menu](https://www.primereact.org/docs/primitive/components/menu.md): An unstyled, accessible menu component with compound composition for inline and popup navigation.
+- [Message](https://www.primereact.org/docs/primitive/components/message.md): An unstyled message component for displaying inline notifications with close and auto-dismiss support.
+- [MeterGroup](https://www.primereact.org/docs/primitive/components/metergroup.md): Unstyled meter group primitive for scalar measurements within a range.
+- [Motion](https://www.primereact.org/docs/primitive/components/motion.md): Configure enter/leave animations on primitive components with motionProps.
+- [NavigationMenu](https://www.primereact.org/docs/primitive/components/navigationmenu.md): An unstyled, accessible horizontal menu bar that coordinates multiple Menu instances with keyboard navigation between them.
+- [OrganizationChart](https://www.primereact.org/docs/primitive/components/organizationchart.md): Unstyled, accessible org-chart primitive with a compound API.
+- [Paginator](https://www.primereact.org/docs/primitive/components/paginator.md): An unstyled, accessible paginator component with compound composition.
+- [Panel](https://www.primereact.org/docs/primitive/components/panel.md): An unstyled, accessible panel component with optional collapsible content.
+- [Popover](https://www.primereact.org/docs/primitive/components/popover.md): An unstyled popover component with positioning, focus management, and outside click dismissal.
+- [Portal](https://www.primereact.org/docs/primitive/components/portal.md): An unstyled utility component that renders content into a DOM node outside the component hierarchy.
+- [ProgressBar](https://www.primereact.org/docs/primitive/components/progressbar.md): An unstyled progress bar component for displaying process completion status.
+- [ProgressSpinner](https://www.primereact.org/docs/primitive/components/progressspinner.md): An unstyled, accessible circular progress component with compound composition.
+- [RadioButton](https://www.primereact.org/docs/primitive/components/radiobutton.md): An unstyled, accessible radio button component with compound composition and group support.
+- [Rating](https://www.primereact.org/docs/primitive/components/rating.md): An unstyled, accessible rating component with compound composition for star-based selection input.
+- [ScrollArea](https://www.primereact.org/docs/primitive/components/scrollarea.md): An unstyled, accessible scroll area component with custom scrollbar support.
+- [Select](https://www.primereact.org/docs/primitive/components/select.md): An unstyled select dropdown component with keyboard navigation, filtering, and single or multiple selection.
+- [Sidebar](https://www.primereact.org/docs/primitive/components/sidebar.md): An unstyled layout component for building application navigation with collapsible panels, multi-variant styling, and composable menu structures.
+- [Skeleton](https://www.primereact.org/docs/primitive/components/skeleton.md): An unstyled placeholder component for displaying loading states.
+- [Slider](https://www.primereact.org/docs/primitive/components/slider.md): An unstyled, accessible slider component with compound composition.
+- [SpeedDial](https://www.primereact.org/docs/primitive/components/speeddial.md): An unstyled, accessible speed dial component with compound composition.
+- [Splitter](https://www.primereact.org/docs/primitive/components/splitter.md): An unstyled resizable panel layout component with pointer and keyboard-driven sizing.
+- [Stepper](https://www.primereact.org/docs/primitive/components/stepper.md): An unstyled, accessible stepper component with compound composition for multi-step workflows.
+- [StyleClass](https://www.primereact.org/docs/primitive/components/styleclass.md): StyleClass manages CSS classes on a target element with enter/leave animations triggered by user interaction.
+- [Tabs](https://www.primereact.org/docs/primitive/components/tabs.md): An unstyled tab component with keyboard navigation and scrollable overflow support.
+- [Tag](https://www.primereact.org/docs/primitive/components/tag.md): An unstyled, accessible tag component for categorizing content.
+- [Terminal](https://www.primereact.org/docs/primitive/components/terminal.md): An unstyled terminal component for building command-line style interfaces with full control over layout and styling.
+- [Textarea](https://www.primereact.org/docs/primitive/components/textarea.md): An unstyled multi-line text input component with auto-resize support.
+- [Timeline](https://www.primereact.org/docs/primitive/components/timeline.md): An unstyled timeline component for visualizing sequential events with full control over layout and styling.
+- [Toast](https://www.primereact.org/docs/primitive/components/toast.md): An unstyled, accessible toast notification system with compound composition.
+- [ToggleButton](https://www.primereact.org/docs/primitive/components/togglebutton.md): An unstyled toggle button component with group selection support for single and multiple modes.
+- [ToggleButtonGroup](https://www.primereact.org/docs/primitive/components/togglebuttongroup.md): An unstyled container that groups multiple toggle buttons with single or multiple selection.
+- [ToggleSwitch](https://www.primereact.org/docs/primitive/components/toggleswitch.md): An unstyled, accessible toggle switch component with compound composition.
+- [Toolbar](https://www.primereact.org/docs/primitive/components/toolbar.md): An unstyled toolbar component with compound composition for grouping actions.
+- [Tooltip](https://www.primereact.org/docs/primitive/components/tooltip.md): An unstyled tooltip component with hover/focus triggers, delay management, and group transitions.
+- [Tree](https://www.primereact.org/docs/primitive/components/tree.md): Unstyled, accessible tree primitive with a compound API.
+- [TreeTable](https://www.primereact.org/docs/primitive/components/treetable.md): An unstyled hierarchical data table built on DataTable with treeMode enabled, sort, filter, paginate, select, expand, and edit tree-shaped data.
+- [VisuallyHidden](https://www.primereact.org/docs/primitive/components/visuallyhidden.md): A utility component that hides content visually while keeping it accessible to screen readers.
+- [Accordion](https://www.primereact.org/docs/styled/components/accordion.md): Accordion groups content into collapsible panels.
+- [AnimateOnScroll](https://www.primereact.org/docs/styled/components/animateonscroll.md): AnimateOnScroll applies enter and leave animations to elements as they move in and out of the viewport during scroll.
+- [AutoComplete](https://www.primereact.org/docs/styled/components/autocomplete.md): AutoComplete is an input component that provides real-time suggestions when being typed.
+- [Avatar](https://www.primereact.org/docs/styled/components/avatar.md): Avatar represents people using icons, labels and images.
+- [Badge](https://www.primereact.org/docs/styled/components/badge.md): Badge is a small status indicator for another element.
+- [Breadcrumb](https://www.primereact.org/docs/styled/components/breadcrumb.md): Breadcrumb provides contextual information about page hierarchy.
+- [Button](https://www.primereact.org/docs/styled/components/button.md): Button is an extension to standard input element with icons and theming.
+- [ButtonGroup](https://www.primereact.org/docs/styled/components/buttongroup.md): ButtonGroup composes related buttons into a connected pill with shared corners and seams.
+- [Card](https://www.primereact.org/docs/styled/components/card.md): Card is a flexible container component.
+- [Carousel](https://www.primereact.org/docs/styled/components/carousel.md): Carousel is a content slider featuring various customization options.
+- [Checkbox](https://www.primereact.org/docs/styled/components/checkbox.md): Checkbox is an extension to standard checkbox element with theming.
+- [CheckboxGroup](https://www.primereact.org/docs/styled/components/checkboxgroup.md): CheckboxGroup groups multiple checkboxes and manages their shared value.
+- [Chip](https://www.primereact.org/docs/styled/components/chip.md): Chip represents entities using icons, labels and images.
+- [Compare](https://www.primereact.org/docs/styled/components/compare.md): Compare two items side by side with a slider.
+- [ContextMenu](https://www.primereact.org/docs/styled/components/contextmenu.md): A right-click triggered menu with keyboard navigation, nested submenus, and WAI-ARIA support.
+- [DataTable](https://www.primereact.org/docs/styled/components/datatable.md): DataTable displays data in tabular format with sorting, filtering, pagination and selection features.
+- [DataView](https://www.primereact.org/docs/styled/components/dataview.md): DataView displays data in grid or list layout with pagination and sorting features.
+- [DatePicker](https://www.primereact.org/docs/styled/components/datepicker.md): DatePicker is a form component to work with dates.
+- [Dialog](https://www.primereact.org/docs/styled/components/dialog.md): Dialog is a container to display content in an overlay window.
+- [Divider](https://www.primereact.org/docs/styled/components/divider.md): Divider is used to separate contents.
+- [Drawer](https://www.primereact.org/docs/styled/components/drawer.md): Drawer is a panel component displayed as an overlay at the edges of the screen.
+- [Fieldset](https://www.primereact.org/docs/styled/components/fieldset.md): Fieldset is a container component with a legend and optional collapsible content.
+- [FileUpload](https://www.primereact.org/docs/styled/components/fileupload.md): FileUpload is an advanced uploader with dragdrop support, multi file uploads, auto uploading, progress tracking and validations.
+- [FloatLabel API](https://www.primereact.org/docs/styled/components/floatlabel/api.md): API documentation for FloatLabel component
+- [FloatLabel](https://www.primereact.org/docs/styled/components/floatlabel.md): FloatLabel visually integrates a label with its form element.
+- [Fluid API](https://www.primereact.org/docs/styled/components/fluid/api.md): API documentation for Fluid component
+- [Fluid](https://www.primereact.org/docs/styled/components/fluid.md): Fluid is a layout component to make descendant components span full width of their container.
+- [FocusTrap](https://www.primereact.org/docs/styled/components/focustrap.md): Focus Trap keeps focus within a certain DOM element while tabbing.
+- [Gallery](https://www.primereact.org/docs/styled/components/gallery.md): Gallery is a component to display a collection of images in a gallery.
+- [IconField API](https://www.primereact.org/docs/styled/components/iconfield/api.md): API documentation for IconField component
+- [IconField](https://www.primereact.org/docs/styled/components/iconfield.md): IconField wraps an input and an icon.
+- [IftaLabel API](https://www.primereact.org/docs/styled/components/iftalabel/api.md): API documentation for IftaLabel component
+- [IftaLabel](https://www.primereact.org/docs/styled/components/iftalabel.md): IftaLabel visually integrates a label with its form element.
+- [Inplace](https://www.primereact.org/docs/styled/components/inplace.md): Inplace provides an easy to do editing and display at the same time where clicking the output displays the actual content.
+- [InputColor](https://www.primereact.org/docs/styled/components/inputcolor.md): InputColor is a component that allows the user to select a color.
+- [InputGroup API](https://www.primereact.org/docs/styled/components/inputgroup/api.md): API documentation for InputGroup component
+- [InputGroup](https://www.primereact.org/docs/styled/components/inputgroup.md): InputGroup displays text, icon, buttons and other content can be grouped next to an input.
+- [InputMask](https://www.primereact.org/docs/styled/components/inputmask.md): InputMask is used to enter input in a certain format such as numeric, date, currency, email and phone.
+- [InputNumber](https://www.primereact.org/docs/styled/components/inputnumber.md): InputNumber is used to enter numeric values.
+- [InputOtp](https://www.primereact.org/docs/styled/components/inputotp.md): InputOtp is used to enter one time passwords.
+- [InputPassword](https://www.primereact.org/docs/styled/components/inputpassword.md): InputPassword is an enhanced input for password entry with strength metering, mask toggling, and controlled or uncontrolled usage.
+- [InputTags](https://www.primereact.org/docs/styled/components/inputtags.md): InputTags groups a collection of contents in items.
+- [InputText](https://www.primereact.org/docs/styled/components/inputtext.md): InputText is an extension to standard input element with icons and theming.
+- [KeyFilter](https://www.primereact.org/docs/styled/components/keyfilter.md): KeyFilter is used to block individual keystrokes based on a pattern.
+- [Knob](https://www.primereact.org/docs/styled/components/knob.md): Knob is a form component to define number inputs with a dial.
+- [Label API](https://www.primereact.org/docs/styled/components/label/api.md): API documentation for Label component
+- [Label](https://www.primereact.org/docs/styled/components/label.md): Label provides accessible text labels for form controls. Use `htmlFor` to link the label to a form control by its id.
+- [Listbox](https://www.primereact.org/docs/styled/components/listbox.md): Listbox is used to select one or more values from a list of items.
+- [Menu](https://www.primereact.org/docs/styled/components/menu.md): A keyboard-navigable dropdown menu with support for items, checkbox items, radio items, and nested submenus.
+- [Message](https://www.primereact.org/docs/styled/components/message.md): Message component is used to display inline messages.
+- [MeterGroup](https://www.primereact.org/docs/styled/components/metergroup.md): MeterGroup displays scalar measurements within a known range.
+- [NavigationMenu](https://www.primereact.org/docs/styled/components/navigationmenu.md): NavigationMenu coordinates multiple Menu instances horizontally or vertically, providing keyboard navigation between them and a single source of truth for which menu is open.
+- [OrderList](https://www.primereact.org/docs/styled/components/orderlist.md): OrderList is used to reorder items in a list using selection and drag-drop.
+- [OrganizationChart API](https://www.primereact.org/docs/styled/components/organizationchart/api.md): API documentation for OrganizationChart component
+- [OrganizationChart](https://www.primereact.org/docs/styled/components/organizationchart.md): OrganizationChart visualizes hierarchical organization data.
+- [OverlayManager](https://www.primereact.org/docs/styled/components/overlaymanager.md): OverlayManager opens overlay components imperatively from anywhere in your app.
+- [Paginator](https://www.primereact.org/docs/styled/components/paginator.md): Paginator displays data in paged format and provides navigation between pages.
+- [Panel](https://www.primereact.org/docs/styled/components/panel.md): Panel is a container component with optional collapsible content.
+- [PickList](https://www.primereact.org/docs/styled/components/picklist.md): PickList is used to transfer items between two lists with drag-drop and button controls.
+- [Popover](https://www.primereact.org/docs/styled/components/popover.md): Popover is an overlay container that displays content relative to a trigger.
+- [ProgressBar](https://www.primereact.org/docs/styled/components/progressbar.md): ProgressBar is a process status indicator.
+- [ProgressSpinner](https://www.primereact.org/docs/styled/components/progressspinner.md): ProgressSpinner is a process status indicator that supports both determinate and indeterminate modes.
+- [RadioButton](https://www.primereact.org/docs/styled/components/radiobutton.md): RadioButton is an extension to standard radio button element with theming.
+- [Rating API](https://www.primereact.org/docs/styled/components/rating/api.md): API documentation for Rating component
+- [Rating](https://www.primereact.org/docs/styled/components/rating.md): Rating component is a star based selection input.
+- [ScrollArea](https://www.primereact.org/docs/styled/components/scrollarea.md): ScrollArea is a cross browser, lightweight and themable alternative to native browser scrollbar.
+- [Select](https://www.primereact.org/docs/styled/components/select.md): Select is used to choose an item from a collection of options.
+- [Sidebar](https://www.primereact.org/docs/styled/components/sidebar.md): Sidebar is a layout component for building application navigation with collapsible panels, multi-variant styling, and composable menu structures.
+- [Skeleton](https://www.primereact.org/docs/styled/components/skeleton.md): Skeleton is a placeholder to display instead of the actual content.
+- [Slider](https://www.primereact.org/docs/styled/components/slider.md): Slider is a component to provide input with a drag handle.
+- [SpeedDial](https://www.primereact.org/docs/styled/components/speeddial.md): SpeedDial is a floating action button with a popup menu displaying a set of actions.
+- [Splitter](https://www.primereact.org/docs/styled/components/splitter.md): Splitter is utilized to separate and resize panels.
+- [Stepper](https://www.primereact.org/docs/styled/components/stepper.md): The Stepper component displays a wizard-like workflow by guiding users through the multi-step progression.
+- [Tabs](https://www.primereact.org/docs/styled/components/tabs.md): Tabs is a component that displays a list of tabs and allows the user to select one.
+- [Tag](https://www.primereact.org/docs/styled/components/tag.md): Tag component is used to categorize content.
+- [Terminal](https://www.primereact.org/docs/styled/components/terminal.md): Terminal is a text-based interface component that emulates a command line experience, enabling users to enter commands and receive responses.
+- [Textarea](https://www.primereact.org/docs/styled/components/textarea.md): Textarea is a multi-line text input element.
+- [Timeline](https://www.primereact.org/docs/styled/components/timeline.md): Timeline visualizes a series of chained events.
+- [Toast](https://www.primereact.org/docs/styled/components/toast.md): Toast is a component that displays a message to the user.
+- [ToggleButton](https://www.primereact.org/docs/styled/components/togglebutton.md): ToggleButton component is used to create a button that can be toggled on or off.
+- [ToggleButtonGroup](https://www.primereact.org/docs/styled/components/togglebuttongroup.md): ToggleButtonGroup component is used to create a group of toggle buttons.
+- [ToggleSwitch](https://www.primereact.org/docs/styled/components/toggleswitch.md): ToggleSwitch is used to select a boolean value.
+- [Toolbar](https://www.primereact.org/docs/styled/components/toolbar.md): Toolbar is a grouping component for buttons and other content.
+- [Tooltip](https://www.primereact.org/docs/styled/components/tooltip.md): Tooltip is a component that displays a tooltip when the user hovers over an element.
+- [Tree](https://www.primereact.org/docs/styled/components/tree.md): Tree is used to display hierarchical data.
+- [Tree Theming](https://www.primereact.org/docs/styled/components/tree/theming.md): Theming documentation for Tree component
+- [TreeTable](https://www.primereact.org/docs/styled/components/treetable.md): TreeTable renders hierarchical data with the same feature set as DataTable, sort, filter, pagination, selection, scroll, frozen, resize, reorder, editing, export.
+- [LLMs.txt](https://www.primereact.org/docs/styled/guides/ai/llms.md): LLMs.txt is a file that contains the LLMs for the PrimeReact documentation.
+- [Custom Icons](https://www.primereact.org/docs/styled/guides/icons/customicons.md): PrimeReact components can be used with any icon library using the templating features.
+- [Prime Icons](https://www.primereact.org/docs/styled/guides/icons/primeicons.md): PrimeIcons is the default icon library of PrimeReact with over 250 open source icons developed by PrimeTek. PrimeIcons library is optional as PrimeReact components can use any icon with templating.
+- [With Astro](https://www.primereact.org/docs/styled/guides/installation/astro.md): Setting up PrimeReact in an Astro project.
+- [Installation](https://www.primereact.org/docs/styled/guides/installation.md): How to set up PrimeReact in your project. Select your framework to get started.
+- [Manual](https://www.primereact.org/docs/styled/guides/installation/manual.md): Setting up PrimeReact manually in any project.
+- [With Next.js](https://www.primereact.org/docs/styled/guides/installation/nextjs.md): Setting up PrimeReact in a Next.js project.
+- [With React Router](https://www.primereact.org/docs/styled/guides/installation/react-router.md): Setting up PrimeReact in a React Router project.
+- [With TanStack](https://www.primereact.org/docs/styled/guides/installation/tanstack.md): Setting up PrimeReact in a TanStack Start project.
+- [With Vite](https://www.primereact.org/docs/styled/guides/installation/vite.md): Setting up PrimeReact in a Vite project.
+- [Accessibility](https://www.primereact.org/docs/styled/guides/misc/accessibility.md): PrimeReact has WCAG level compliance, refer to the accessibility documentation of each component for detailed information.
+- [Animations](https://www.primereact.org/docs/styled/guides/misc/animations.md): Built-in CSS animations for PrimeReact components.
+- [Pass Through](https://www.primereact.org/docs/styled/guides/misc/passthrough.md): The Pass Through attributes is an API to access the internal DOM Structure of the components.
+- [RTL Support](https://www.primereact.org/docs/styled/guides/misc/rtl.md): Right-to-left direction support of PrimeReact.
+- [Styled Mode](https://www.primereact.org/docs/styled/guides/theming/styled.md): Choose from a variety of pre-styled themes or develop your own.
+- [Tailwind CSS](https://www.primereact.org/docs/styled/guides/theming/tailwind.md): Integration between PrimeReact and Tailwind CSS both in styled and unstyled modes.
+- [Unstyled Mode](https://www.primereact.org/docs/styled/guides/theming/unstyled.md): Build fully customizable components with complete control over styling by disabling default themes and implementing your own design system.
+- [Accordion](https://www.primereact.org/docs/tailwind/components/accordion.md): Accordion groups content into collapsible panels.
+- [AutoComplete](https://www.primereact.org/docs/tailwind/components/autocomplete.md): AutoComplete is an input component that provides real-time suggestions when being typed.
+- [Avatar](https://www.primereact.org/docs/tailwind/components/avatar.md): Avatar represents people using icons, labels and images.
+- [Badge](https://www.primereact.org/docs/tailwind/components/badge.md): Badge is a small status indicator for another element.
+- [Breadcrumb](https://www.primereact.org/docs/tailwind/components/breadcrumb.md): Breadcrumb provides contextual information about page hierarchy.
+- [Button](https://www.primereact.org/docs/tailwind/components/button.md): Button is an extension to standard input element with icons and theming.
+- [ButtonGroup](https://www.primereact.org/docs/tailwind/components/buttongroup.md): ButtonGroup composes related buttons into a connected pill with shared corners and seams.
+- [Card](https://www.primereact.org/docs/tailwind/components/card.md): Card is a flexible container component.
+- [Carousel](https://www.primereact.org/docs/tailwind/components/carousel.md): Carousel is a content slider featuring various customization options.
+- [Checkbox](https://www.primereact.org/docs/tailwind/components/checkbox.md): Checkbox is an extension to standard checkbox element with theming.
+- [CheckboxGroup](https://www.primereact.org/docs/tailwind/components/checkboxgroup.md): Checkbox is an extension to standard checkbox element with theming.
+- [Chip](https://www.primereact.org/docs/tailwind/components/chip.md): Chip represents entities using icons, labels and images.
+- [Compare](https://www.primereact.org/docs/tailwind/components/compare.md): Compare is a component to compare two images with a slider.
+- [ContextMenu](https://www.primereact.org/docs/tailwind/components/contextmenu.md): A right-click triggered menu with keyboard navigation, nested submenus, and WAI-ARIA support.
+- [DataTable](https://www.primereact.org/docs/tailwind/components/datatable.md): DataTable displays tabular data with sorting, pagination, selection and filtering features.
+- [DataView](https://www.primereact.org/docs/tailwind/components/dataview.md): DataView displays data in grid or list layout with pagination and sorting features.
+- [DatePicker](https://www.primereact.org/docs/tailwind/components/datepicker.md): DatePicker is a form component to work with dates.
+- [Dialog](https://www.primereact.org/docs/tailwind/components/dialog.md): Dialog is a container to display content in an overlay window.
+- [Divider](https://www.primereact.org/docs/tailwind/components/divider.md): Divider is used to separate contents.
+- [Drawer](https://www.primereact.org/docs/tailwind/components/drawer.md): Drawer is a panel component displayed as an overlay at the edges of the screen.
+- [Fieldset](https://www.primereact.org/docs/tailwind/components/fieldset.md): Fieldset is a container component with a legend and optional collapsible content.
+- [Fluid](https://www.primereact.org/docs/tailwind/components/fluid.md): Fluid is a layout component to make descendant components span full width of their container.
+- [IconField](https://www.primereact.org/docs/tailwind/components/iconfield.md): IconField wraps an input and an icon.
+- [Inplace](https://www.primereact.org/docs/tailwind/components/inplace.md): Inplace provides an easy to do editing and display at the same time where clicking the output displays the actual content.
+- [InputColor](https://www.primereact.org/docs/tailwind/components/inputcolor.md): InputColor is a component that allows the user to select a color.
+- [InputGroup](https://www.primereact.org/docs/tailwind/components/inputgroup.md): InputGroup displays text, icon, buttons and other content can be grouped next to an input.
+- [InputNumber](https://www.primereact.org/docs/tailwind/components/inputnumber.md): InputNumber is used to enter numeric values.
+- [InputOtp](https://www.primereact.org/docs/tailwind/components/inputotp.md): InputOtp is used to enter one time passwords.
+- [InputPassword](https://www.primereact.org/docs/tailwind/components/inputpassword.md): InputPassword is an enhanced input for password entry with strength metering, mask toggling, and controlled or uncontrolled usage.
+- [InputText](https://www.primereact.org/docs/tailwind/components/inputtext.md): InputText is an extension to standard input element with icons and theming.
+- [Label](https://www.primereact.org/docs/tailwind/components/label.md): Label provides accessible text labels for form controls. Use `htmlFor` to link the label to a form control by its id.
+- [Listbox](https://www.primereact.org/docs/tailwind/components/listbox.md): Listbox is used to select one or more values from a list of items.
+- [Menu](https://www.primereact.org/docs/tailwind/components/menu.md): A keyboard-navigable dropdown menu with support for items, checkbox items, radio items, and nested submenus.
+- [Message](https://www.primereact.org/docs/tailwind/components/message.md): Message component is used to display inline messages.
+- [MeterGroup](https://www.primereact.org/docs/tailwind/components/metergroup.md): MeterGroup displays scalar measurements within a known range.
+- [NavigationMenu](https://www.primereact.org/docs/tailwind/components/navigationmenu.md): NavigationMenu coordinates multiple Menu instances horizontally with shared open state and keyboard navigation between triggers.
+- [OverlayManager](https://www.primereact.org/docs/tailwind/components/overlaymanager.md): OverlayManager opens overlay components imperatively from anywhere in your app.
+- [Paginator](https://www.primereact.org/docs/tailwind/components/paginator.md): Paginator displays data in paged format and provides navigation between pages.
+- [Panel](https://www.primereact.org/docs/tailwind/components/panel.md): Panel is a container component with optional collapsible content.
+- [Popover](https://www.primereact.org/docs/tailwind/components/popover.md): Popover is an overlay container that displays content relative to a trigger.
+- [ProgressBar](https://www.primereact.org/docs/tailwind/components/progressbar.md): ProgressBar is a process status indicator.
+- [RadioButton](https://www.primereact.org/docs/tailwind/components/radiobutton.md): RadioButton is an extension to standard radio button element with theming.
+- [Rating](https://www.primereact.org/docs/tailwind/components/rating.md): Rating component is a star based selection input.
+- [ScrollArea](https://www.primereact.org/docs/tailwind/components/scrollarea.md): ScrollArea is a cross browser, lightweight and themable alternative to native browser scrollbar.
+- [Select](https://www.primereact.org/docs/tailwind/components/select.md): Select is used to choose an item from a collection of options.
+- [Sidebar](https://www.primereact.org/docs/tailwind/components/sidebar.md): Sidebar is a layout component for building application navigation with collapsible panels, multi-variant styling, and composable menu structures.
+- [Skeleton](https://www.primereact.org/docs/tailwind/components/skeleton.md): Skeleton is a placeholder to display instead of the actual content.
+- [Slider](https://www.primereact.org/docs/tailwind/components/slider.md): Slider is a component to provide input with a drag handle.
+- [Splitter](https://www.primereact.org/docs/tailwind/components/splitter.md): Splitter is utilized to separate and resize panels.
+- [Tabs](https://www.primereact.org/docs/tailwind/components/tabs.md): Tabs is a component that displays a list of tabs and allows the user to select one.
+- [Tag](https://www.primereact.org/docs/tailwind/components/tag.md): Tag is a label component used to categorize content.
+- [Textarea](https://www.primereact.org/docs/tailwind/components/textarea.md): Textarea is a multi-line text input element.
+- [Timeline](https://www.primereact.org/docs/tailwind/components/timeline.md): Timeline visualizes a series of chained events.
+- [Toast](https://www.primereact.org/docs/tailwind/components/toast.md): Toast is a component that displays a message to the user.
+- [ToggleButton](https://www.primereact.org/docs/tailwind/components/togglebutton.md): ToggleButton component is used to create a button that can be toggled on or off.
+- [ToggleButtonGroup](https://www.primereact.org/docs/tailwind/components/togglebuttongroup.md): ToggleButtonGroup component is used to create a group of toggle buttons.
+- [ToggleSwitch](https://www.primereact.org/docs/tailwind/components/toggleswitch.md): ToggleSwitch is used to select a boolean value.
+- [Toolbar](https://www.primereact.org/docs/tailwind/components/toolbar.md): Toolbar is a grouping component for buttons and other content.
+- [Tooltip](https://www.primereact.org/docs/tailwind/components/tooltip.md): Tooltip is a component that displays a tooltip when the user hovers over an element.
+- [LLMs.txt](https://www.primereact.org/docs/tailwind/guides/ai/llms.md): LLMs.txt is a file that contains the LLMs for the PrimeReact documentation.
+- [Custom Icons](https://www.primereact.org/docs/tailwind/guides/icons/customicons.md): PrimeReact components can be used with any icon library using the templating features.
+- [Prime Icons](https://www.primereact.org/docs/tailwind/guides/icons/primeicons.md): PrimeIcons is the default icon library of PrimeReact with over 250 open source icons developed by PrimeTek. PrimeIcons library is optional as PrimeReact components can use any icon with templating.
+- [With Astro](https://www.primereact.org/docs/tailwind/guides/installation/astro.md): Setting up PrimeReact Tailwind components in an Astro project.
+- [Installation](https://www.primereact.org/docs/tailwind/guides/installation.md): How to set up PrimeReact in your project. Select your framework to get started.
+- [Manual](https://www.primereact.org/docs/tailwind/guides/installation/manual.md): Setting up PrimeReact Tailwind components manually in any project.
+- [With Next.js](https://www.primereact.org/docs/tailwind/guides/installation/nextjs.md): Setting up PrimeReact Tailwind components in a Next.js project.
+- [With React Router](https://www.primereact.org/docs/tailwind/guides/installation/react-router.md): Setting up PrimeReact Tailwind components in a React Router project.
+- [With TanStack](https://www.primereact.org/docs/tailwind/guides/installation/tanstack.md): Setting up PrimeReact Tailwind components in a TanStack Start project.
+- [With Vite](https://www.primereact.org/docs/tailwind/guides/installation/vite.md): Setting up PrimeReact Tailwind components in a Vite project.
+- [Accessibility](https://www.primereact.org/docs/tailwind/guides/misc/accessibility.md): PrimeReact has WCAG level compliance, refer to the accessibility documentation of each component for detailed information.
+- [Pass Through](https://www.primereact.org/docs/tailwind/guides/misc/passthrough.md): The Pass Through attributes is an API to access the internal DOM Structure of the components.
+- [RTL Support](https://www.primereact.org/docs/tailwind/guides/misc/rtl.md): Right-to-left direction support of PrimeReact.
+- [Theming](https://www.primereact.org/docs/tailwind/guides/theming/guide.md): Theme PrimeReact's Tailwind components with CSS variables and the tailwindcss-primeui plugin.

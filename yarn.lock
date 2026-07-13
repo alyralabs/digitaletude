@@ -303,10 +303,110 @@
   dependencies:
     "@tybys/wasm-util" "^0.10.3"
 
+"@noble/ed25519@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@noble/ed25519/-/ed25519-2.3.0.tgz#df0dbe424cfd7da4968b956b819c15db5fbe7f21"
+  integrity sha512-M7dvXL2B92/M7dw9+gzuydL8qn/jiqNHaoR3Q+cb1q1GHV7uwE17WCyFMG+Y+TZb5izcaXk5TdJRrDUxHXL78A==
+
 "@oxc-project/types@=0.139.0":
   version "0.139.0"
   resolved "https://registry.npmjs.org/@oxc-project/types/-/types-0.139.0.tgz"
   integrity sha512-r9gHphtCs+1M7J0pw6Sn/hh/Wpa/iQrOOkrNAlVLF/gHq+/CJmHIWKKUUhdWjcD6CIa8idarspCsASiXCXvFUw==
+
+"@primeicons/core@8.0.0-alpha.1":
+  version "8.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@primeicons/core/-/core-8.0.0-alpha.1.tgz#76c6ec8733480dbb1ed91953b24b7bfe916974a9"
+  integrity sha512-FjipxrQKiZae/dhspo4s7zUQEat7SjK4tfoiCR3FQh5biaj7LlZFkMmwHkBCQzlVYAujSjRiOdMjPe2jcT6P7A==
+  dependencies:
+    "@primeuix/utils" "^0.6.4"
+
+"@primeicons/react@^8.0.0-alpha.1":
+  version "8.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@primeicons/react/-/react-8.0.0-alpha.1.tgz#6e08645edee0954ec25d2d4de96a1818dd591d81"
+  integrity sha512-iPMDMe5P3aOH6zZP6BATiRoLHF1pye8gBEMtbeJFOKC4+EvRG/DJfEfTYF9VxGR36XYYS0+yZ4Vb3XNjCYJCRg==
+  dependencies:
+    "@primeicons/core" "8.0.0-alpha.1"
+    "@primeuix/utils" "^0.6.4"
+
+"@primereact/core@11.0.0-rc.2":
+  version "11.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@primereact/core/-/core-11.0.0-rc.2.tgz#bc2fff97af676463972827ee9d3372e3ce3f6595"
+  integrity sha512-7I0dnZkqhON7CfyPRNfFMT/BORwJY41aTMSaud1UeAio0tPpXlhyy5wysYeuJ3q0YWScdgzb+qiPPTnQ1OeoSg==
+  dependencies:
+    "@primereact/hooks" "11.0.0-rc.2"
+    "@primereact/types" "11.0.0-rc.2"
+    "@primeui/license-manager" "^1.0.0-rc.2"
+    "@primeuix/locale" "^0.1.0-rc.1"
+    "@primeuix/motion" "^1.0.0-rc.2"
+    "@primeuix/styled" "^1.0.0-rc.3"
+    "@primeuix/utils" "^0.8.0-rc.2"
+
+"@primereact/headless@11.0.0-rc.2":
+  version "11.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@primereact/headless/-/headless-11.0.0-rc.2.tgz#e1e87e485c1b359657b37bf352e07ac1ada00d19"
+  integrity sha512-GRBFG/OQUzV0t6XdkGWQH0NG9XlI3oKC9iSUi7jw7VV5cPNxh+QOGy+YPzYeZwGjZaNBZ/aoV0n+8F5T+NGo+Q==
+  dependencies:
+    "@primereact/core" "11.0.0-rc.2"
+    "@primereact/hooks" "11.0.0-rc.2"
+    "@primeui/license-manager" "^1.0.0-rc.2"
+    "@primeuix/styled" "^1.0.0-rc.3"
+    "@primeuix/utils" "^0.8.0-rc.2"
+
+"@primereact/hooks@11.0.0-rc.2":
+  version "11.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@primereact/hooks/-/hooks-11.0.0-rc.2.tgz#cb2c1ce9162c7ca4a293987bb0890d6d00c91692"
+  integrity sha512-U4VnlKA5IWA+Ul6onfKqF+tjoe1vF9nYN4fTK/qOKBom+Uk7uOb2X+oliGp2e11ETtoI3ZaNb1dYVUyGSl9HzQ==
+  dependencies:
+    "@primeuix/utils" "^0.8.0-rc.2"
+
+"@primereact/types@11.0.0-rc.2":
+  version "11.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@primereact/types/-/types-11.0.0-rc.2.tgz#c42624a204c4a217a0661b3a651924a89ca76f60"
+  integrity sha512-9f4wavYzlJqDS8vPgn9Nvidi7vLZhtvJMI4hRbe1dlp2igEKUL0rLloBpx9MmRDtsVkC99iHJ8jFjBMyOkaLzg==
+
+"@primeui/license-manager@^1.0.0-rc.2":
+  version "1.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@primeui/license-manager/-/license-manager-1.0.0-rc.2.tgz#46496fec9819c5c918a6cc95171901fed465d309"
+  integrity sha512-v85A+rsv+lNmfLjA7puZjaGHui+OTMDFMy9jmORHo1E0g+HOCewsLL7JXi8uI4BC2NtOdjbg4WFwCRi8soEw4g==
+  dependencies:
+    "@noble/ed25519" "^2.3.0"
+
+"@primeuix/locale@^0.1.0-rc.1":
+  version "0.1.0-rc.1"
+  resolved "https://registry.yarnpkg.com/@primeuix/locale/-/locale-0.1.0-rc.1.tgz#e0843975c9d735b4f83cdfc3907118e964c44f5d"
+  integrity sha512-R055OsjP/srGSiXwdDwVYLMBBaQAr3a1GPLWpPYrN/LgGGqTl5t6daR3QxMlkOxTXhwKT/jbwFleoEjGHslAxw==
+  dependencies:
+    "@primeuix/utils" "^0.8.0-rc.2"
+
+"@primeuix/motion@^1.0.0-rc.2":
+  version "1.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@primeuix/motion/-/motion-1.0.0-rc.2.tgz#348b887bc896334496aa0a9a81b9e1707654f5e2"
+  integrity sha512-Fzy//d8AY3q6FpQkSn+8SksIWdNhQ0IxHSjFpwPr3+BKf1R7zmPk/lvebkUP2MGSsWGH9MCiwa6GiDaUSrlemA==
+  dependencies:
+    "@primeuix/utils" "^0.8.0-rc.1"
+
+"@primeuix/styled@^1.0.0-rc.3":
+  version "1.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/@primeuix/styled/-/styled-1.0.0-rc.3.tgz#8da12528d1f3462362912139a260816e97233d56"
+  integrity sha512-OeKaUk7q6Tkpyr8RuFloQ9kWhEZMK3POENDjr8pgufZUnpz5aDjLW5Ls+bMCVlTPPw1Ae++VtSuadxlxtyrxIg==
+  dependencies:
+    "@primeui/license-manager" "^1.0.0-rc.2"
+    "@primeuix/utils" "^0.8.0-rc.2"
+
+"@primeuix/utils@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@primeuix/utils/-/utils-0.6.4.tgz#f436eae1be166662d424b8550a97ba0c150819e6"
+  integrity sha512-pZ5f+vj7wSzRhC7KoEQRU5fvYAe+RP9+m39CTscZ3UywCD1Y2o6Fe1rRgklMPSkzUcty2jzkA0zMYkiJBD1hgg==
+
+"@primeuix/utils@^0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@primeuix/utils/-/utils-0.7.2.tgz#0ded7f74bddf191f0e16aea34b593a7fcffa94b5"
+  integrity sha512-pmEbSfP0Phf9W9RweiM66zXnkn73ZeKyYINElbX3uZ2+stzzaba2svLAl3B1pHVcRw5t43O0VciaGe4ye2EXKw==
+
+"@primeuix/utils@^0.8.0-rc.1", "@primeuix/utils@^0.8.0-rc.2":
+  version "0.8.0-rc.2"
+  resolved "https://registry.yarnpkg.com/@primeuix/utils/-/utils-0.8.0-rc.2.tgz#0cdc29da87fe1fa1549e74e6e81c2082993df910"
+  integrity sha512-RNiI/sXhixasb45aRF4/iKvhryQIvXgO0xuShY0GA4HdMidrWwN+re9LI2xt1az8BwYdL3ao5tW/WMi8Pyx/wA==
 
 "@rolldown/binding-android-arm64@1.1.5":
   version "1.1.5"
@@ -742,6 +842,18 @@ caniuse-lite@^1.0.30001803:
   version "1.0.30001805"
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001805.tgz"
   integrity sha512-52noaS3DubycKSXaU30TwPGIp+POyQSUVa5jBEq3vkRkY0kjyb3LQgvhU6WGyCcyXqVLWO0Cw0Q6BSdD0kUfVA==
+
+class-variance-authority@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/class-variance-authority/-/class-variance-authority-0.7.1.tgz#4008a798a0e4553a781a57ac5177c9fb5d043787"
+  integrity sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==
+  dependencies:
+    clsx "^2.1.1"
+
+clsx@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
+  integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
 
 convert-source-map@^2.0.0:
   version "2.0.0"
@@ -1268,6 +1380,14 @@ prettier@^3.9.5:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.9.5.tgz#4fec97736e33b9d0b620b48914fe93b530e835ad"
   integrity sha512-/FVl766LpUfB5vXgCYOYa0MeV/441Ia99AeICQIQFTY/Nw0roZwULcXpku5i1/m5kt/baz+s4Zogspd839HSMg==
 
+primereact@^11.0.0-rc.1:
+  version "11.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/primereact/-/primereact-11.0.0-rc.2.tgz#6801a81a1e974693a3d5e77d1b5305efb21e2409"
+  integrity sha512-Q9xDuo3J/MaQQPaKy/9u8Tkz/R/8kYQ15eBM5aeKYX/tINxtc3xtsHMXBKIqYgrDM5K/nNg71sawmNHDQyDs7g==
+  dependencies:
+    "@primereact/core" "11.0.0-rc.2"
+    "@primereact/headless" "11.0.0-rc.2"
+
 punycode@^2.1.0:
   version "2.3.1"
   resolved "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz"
@@ -1353,6 +1473,16 @@ source-map-js@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz"
   integrity sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==
+
+tailwind-merge@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/tailwind-merge/-/tailwind-merge-3.6.0.tgz#88d83242d1dd7bc847223f73dcf210dd1f2ee11c"
+  integrity sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==
+
+tailwindcss-primeui@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/tailwindcss-primeui/-/tailwindcss-primeui-0.6.1.tgz#fcb74738e80d4253c14521114773f5ce638c6ee8"
+  integrity sha512-T69Rylcrmnt8zy9ik+qZvsLuRIrS9/k6rYJSIgZ1trnbEzGDDQSCIdmfyZknevqiHwpSJHSmQ9XT2C+S/hJY4A==
 
 tailwindcss@4.3.2, tailwindcss@^4.3.2:
   version "4.3.2"

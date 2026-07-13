@@ -11,19 +11,19 @@ export const starWarsQuotes = {
 
 export const placeholderImages = {
   hero:
-    'https://images.unsplash.com/photo-1444703686981-a3acbcd4455f?w=1200&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=1200&h=500&fit=crop',
   portrait:
-    'https://images.unsplash.com/photo-1419242902214-272b3597ed5b?w=400&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=400&h=500&fit=crop',
   landscape:
     'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=450&fit=crop',
   square:
     'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&h=400&fit=crop',
   wide:
-    'https://images.unsplash.com/photo-1502134249126-9f3755a50d84?w=900&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&h=300&fit=crop',
   gallery: [
-    'https://images.unsplash.com/photo-1464802686167-b939a6910699?w=350&h=350&fit=crop',
-    'https://images.unsplash.com/photo-1454789548928-9efd52c48361?w=350&h=350&fit=crop',
-    'https://images.unsplash.com/photo-1506318137071-a8e063f4d0ea?w=350&h=350&fit=crop',
+    'https://images.unsplash.com/photo-1447433589675-4aaa569f3e05?w=350&h=350&fit=crop',
+    'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=350&h=350&fit=crop',
+    'https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=350&h=350&fit=crop',
     'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=350&h=350&fit=crop',
   ],
 }

@@ -1,5 +1,8 @@
 import { NavLink } from 'react-router'
-import { useTheme } from '../context/ThemeContext'
+import { Moon } from '@primeicons/react/moon'
+import { Sun } from '@primeicons/react/sun'
+import { Button } from '@/components/ui/button'
+import { useTheme } from '../context/theme'
 
 const navItems = [
   { to: '/', label: 'Home', end: true },
@@ -12,20 +15,18 @@ const navItems = [
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   [
     'text-sm font-medium transition-colors',
-    isActive
-      ? 'text-accent'
-      : 'text-muted hover:text-fg',
+    isActive ? 'text-primary' : 'text-muted-color hover:text-color',
   ].join(' ')
 
 export default function NavBar() {
   const { theme, toggleTheme } = useTheme()
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-nav backdrop-blur-sm">
-      <nav className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-6 py-4">
+    <header className="sticky top-0 z-50 border-b border-surface bg-surface-0/85 backdrop-blur-sm dark:bg-surface-950/85">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-6 py-3">
         <NavLink
           to="/"
-          className="text-lg font-semibold tracking-tight text-fg hover:text-accent"
+          className="text-lg font-semibold tracking-tight text-color hover:text-primary"
         >
           digitaletude
         </NavLink>
@@ -40,14 +41,16 @@ export default function NavBar() {
           ))}
         </ul>
 
-        <button
-          type="button"
-          onClick={toggleTheme}
+        <Button
+          variant="text"
+          severity="secondary"
+          rounded
+          iconOnly
           aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-fg transition-colors hover:border-accent hover:text-accent"
+          onClick={toggleTheme}
         >
-          {theme === 'light' ? 'Dark' : 'Light'}
-        </button>
+          {theme === 'light' ? <Moon /> : <Sun />}
+        </Button>
       </nav>
     </header>
   )
