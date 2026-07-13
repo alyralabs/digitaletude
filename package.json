@@ -12,6 +12,7 @@
   "dependencies": {
     "@primeicons/react": "^8.0.0-alpha.1",
     "@primeuix/utils": "^0.7.2",
+    "@supabase/supabase-js": "^2.110.2",
     "class-variance-authority": "^0.7.1",
     "primereact": "^11.0.0-rc.1",
     "react": "^19.2.7",
