@@ -187,6 +187,87 @@ describe('MusicAdmin track inline edit', () => {
   })
 })
 
+describe('MusicAdmin album cover upload', () => {
+  it('PATCHes /api/admin/albums/:id/cover with the file and revalidates', async () => {
+    vi.mocked(adminFetch).mockResolvedValue(undefined)
+    const user = userEvent.setup()
+    renderAdmin()
+
+    const albumsSection = (await screen.findByText('Albums (1)')).closest(
+      'section',
+    )!
+    await user.click(
+      within(albumsSection).getByRole('button', { name: 'Edit' }),
+    )
+
+    const file = new File(['bytes'], 'cover.jpg', { type: 'image/jpeg' })
+    fireEvent.change(screen.getByLabelText('Cover'), {
+      target: { files: [file] },
+    })
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Add cover' }).closest('form')!,
+    )
+
+    await waitFor(() => expect(adminFetch).toHaveBeenCalled())
+    const [path, init] = vi.mocked(adminFetch).mock.calls[0]
+    expect(path).toBe('/api/admin/albums/a1/cover')
+    expect(init?.method).toBe('PATCH')
+    expect((init?.body as FormData).get('cover')).toBeInstanceOf(File)
+
+    await waitFor(() => expect(apiFetch).toHaveBeenCalledTimes(2))
+  })
+
+  it('offers "Change cover" instead of "Add cover" when the album already has one', async () => {
+    vi.mocked(apiFetch).mockResolvedValue({
+      albums: [album({ coverUrl: 'https://example.com/cover.jpg' })],
+      singles: [track()],
+    } satisfies MusicPayload)
+    const user = userEvent.setup()
+    renderAdmin()
+
+    const albumsSection = (await screen.findByText('Albums (1)')).closest(
+      'section',
+    )!
+    await user.click(
+      within(albumsSection).getByRole('button', { name: 'Edit' }),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Change cover' }),
+    ).toBeInTheDocument()
+  })
+})
+
+describe('MusicAdmin track cover upload', () => {
+  it('PATCHes /api/admin/tracks/:id/cover with the file and revalidates', async () => {
+    vi.mocked(adminFetch).mockResolvedValue(undefined)
+    const user = userEvent.setup()
+    renderAdmin()
+
+    await screen.findByText('Original Track')
+    const singlesSection = screen.getByText('Singles (1)').closest('section')!
+    await user.click(
+      within(singlesSection).getByRole('button', { name: 'Edit' }),
+    )
+
+    const file = new File(['bytes'], 'cover.jpg', { type: 'image/jpeg' })
+    fireEvent.change(screen.getByLabelText('Cover'), {
+      target: { files: [file] },
+    })
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Add cover' }).closest('form')!,
+    )
+
+    await waitFor(() => expect(adminFetch).toHaveBeenCalled())
+    const [path, init] = vi.mocked(adminFetch).mock.calls[0]
+    expect(path).toBe('/api/admin/tracks/t1/cover')
+    expect(init?.method).toBe('PATCH')
+    expect((init?.body as FormData).get('cover')).toBeInstanceOf(File)
+
+    await waitFor(() => expect(apiFetch).toHaveBeenCalledTimes(2))
+  })
+})
+
 describe('MusicAdmin delete', () => {
   it('does nothing if the confirm dialog is declined for an album', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(false)

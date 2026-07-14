@@ -53,4 +53,50 @@ describe('Photography', () => {
 
     expect(await screen.findByText('No photos yet.')).toBeInTheDocument()
   })
+
+  it('shows no exif overlay for a photo with no exif data', async () => {
+    vi.mocked(apiFetch).mockResolvedValue([photo])
+
+    renderPhotography()
+
+    await screen.findByAltText('Mountain')
+    expect(screen.queryByText(/f\//)).not.toBeInTheDocument()
+    expect(screen.queryByText(/ISO/)).not.toBeInTheDocument()
+  })
+
+  it('renders an exif overlay with every extracted field', async () => {
+    vi.mocked(apiFetch).mockResolvedValue([
+      {
+        ...photo,
+        exif: {
+          camera: 'Canon EOS R5',
+          aperture: 'f/2.8',
+          shutterSpeed: '1/250s',
+          iso: 'ISO 400',
+          focalLength: '50mm',
+        },
+      } satisfies Photo,
+    ])
+
+    renderPhotography()
+
+    await screen.findByAltText('Mountain')
+    expect(screen.getByText('Canon EOS R5')).toBeInTheDocument()
+    expect(screen.getByText('f/2.8')).toBeInTheDocument()
+    expect(screen.getByText('1/250s')).toBeInTheDocument()
+    expect(screen.getByText('ISO 400')).toBeInTheDocument()
+    expect(screen.getByText('50mm')).toBeInTheDocument()
+  })
+
+  it('omits missing fields instead of rendering them blank', async () => {
+    vi.mocked(apiFetch).mockResolvedValue([
+      { ...photo, exif: { aperture: 'f/4' } } satisfies Photo,
+    ])
+
+    renderPhotography()
+
+    await screen.findByAltText('Mountain')
+    expect(screen.getByText('f/4')).toBeInTheDocument()
+    expect(screen.queryByText(/ISO/)).not.toBeInTheDocument()
+  })
 })

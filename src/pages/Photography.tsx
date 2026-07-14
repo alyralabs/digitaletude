@@ -1,10 +1,35 @@
 import { useLoaderData } from 'react-router'
 import PageSection from '../components/PageSection'
 import { apiFetch } from '../lib/api'
-import type { Photo } from '../lib/types'
+import type { Photo, PhotoExif } from '../lib/types'
 
 export async function loader() {
   return apiFetch<Photo[]>('/api/photos')
+}
+
+// Viewfinder-style readout: solid black, white monospace text, deliberately
+// not tied to the site's semantic color tokens — this is meant to look like
+// a camera's settings display, not app UI chrome. Renders nothing if the
+// photo has no extracted EXIF fields at all.
+function ExifOverlay({ exif }: { exif?: PhotoExif }) {
+  const fields = exif
+    ? [
+        exif.camera,
+        exif.aperture,
+        exif.shutterSpeed,
+        exif.iso,
+        exif.focalLength,
+      ].filter((value): value is string => Boolean(value))
+    : []
+  if (fields.length === 0) return null
+
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-b-lg bg-black/85 px-3 py-1.5 font-mono text-[11px] leading-tight text-white">
+      {fields.map((value) => (
+        <span key={value}>{value}</span>
+      ))}
+    </div>
+  )
 }
 
 export default function Photography() {
@@ -34,7 +59,7 @@ export default function Photography() {
                 href={photo.originalUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="mb-4 block break-inside-avoid"
+                className="relative mb-4 block break-inside-avoid"
               >
                 <img
                   src={photo.thumbnailUrl}
@@ -43,6 +68,7 @@ export default function Photography() {
                   height={photo.height}
                   className="w-full rounded-lg border border-surface"
                 />
+                <ExifOverlay exif={photo.exif} />
               </a>
             ))}
           </div>

@@ -153,6 +153,28 @@
   --font-display: 'Space Grotesk', var(--font-sans);
 }
 
+/* Base size scales up at wider viewports — every Tailwind text and
+   spacing utility is rem-based, so this one lever raises the whole scale
+   (type and padding/gaps together) proportionally instead of just
+   bumping individual text classes across dozens of files. Percentages,
+   not a fixed px value, so a visitor's own browser font-size preference
+   is still respected rather than overridden. */
+html {
+  font-size: 106.25%; /* ~17px against a 16px browser default */
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 112.5%; /* ~18px */
+  }
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 118.75%; /* ~19px */
+  }
+}
+
 body {
   margin: 0;
   background: var(--color-page);

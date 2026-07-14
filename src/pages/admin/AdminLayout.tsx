@@ -13,13 +13,15 @@ export async function loader() {
 const sections = [
   { to: '/admin/photos', label: 'Photos' },
   { to: '/admin/music', label: 'Music' },
-  { to: '/admin/posts', label: 'Posts' },
+  { to: '/admin/posts', label: 'Blog posts' },
 ]
 
-const linkClass = ({ isActive }: { isActive: boolean }) =>
+const sidebarLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
-    'text-sm font-medium transition-colors',
-    isActive ? 'text-primary' : 'text-muted-color hover:text-color',
+    'block rounded-md px-3 py-2 text-sm font-medium transition-colors',
+    isActive
+      ? 'bg-panel text-primary'
+      : 'text-muted-color hover:bg-panel hover:text-color',
   ].join(' ')
 
 export default function AdminLayout() {
@@ -39,16 +41,18 @@ export default function AdminLayout() {
     // Admin is explicitly out of scope for the wide public layout (see
     // plans/04-styling.md) — re-caps to roughly the old site-wide width so
     // admin doesn't stretch to ~1800px along with the public pages.
-    <div className="mx-auto max-w-5xl space-y-8">
-      <div className="flex items-center justify-between border-b border-surface pb-4">
-        <div className="flex items-center gap-5">
-          <h1 className="text-lg font-semibold text-color">Admin</h1>
+    // Vertical sidebar (GitHub settings-style) instead of a horizontal top
+    // bar — stacks on small screens, side-by-side with a divider at md+.
+    <div className="mx-auto flex max-w-5xl flex-col gap-8 md:flex-row">
+      <aside className="shrink-0 space-y-6 md:w-48">
+        <h1 className="text-lg font-semibold text-color">Admin</h1>
+        <nav className="space-y-1">
           {sections.map(({ to, label }) => (
-            <NavLink key={to} to={to} className={linkClass}>
+            <NavLink key={to} to={to} className={sidebarLinkClass}>
               {label}
             </NavLink>
           ))}
-        </div>
+        </nav>
         <Button
           variant="text"
           severity="secondary"
@@ -57,8 +61,10 @@ export default function AdminLayout() {
         >
           Sign out
         </Button>
+      </aside>
+      <div className="min-w-0 flex-1 border-t border-surface pt-8 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+        <Outlet />
       </div>
-      <Outlet />
     </div>
   )
 }

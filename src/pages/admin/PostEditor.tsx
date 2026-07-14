@@ -33,6 +33,7 @@ export default function PostEditor() {
     post?.contentMarkdown ?? '',
   )
   const [busy, setBusy] = useState(false)
+  const [coverBusy, setCoverBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -69,6 +70,26 @@ export default function PostEditor() {
       setError(err instanceof Error ? err.message : 'save failed')
     } finally {
       setBusy(false)
+    }
+  }
+
+  async function onCoverChange(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (!post) return
+    const form = e.currentTarget
+    setCoverBusy(true)
+    setError(null)
+    try {
+      await adminFetch(`/api/admin/posts/${post.id}/cover`, {
+        method: 'PATCH',
+        body: new FormData(form),
+      })
+      form.reset()
+      revalidate()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'cover update failed')
+    } finally {
+      setCoverBusy(false)
     }
   }
 
@@ -125,6 +146,47 @@ export default function PostEditor() {
 
       {error && <p className="text-sm text-danger">{error}</p>}
 
+      {!isNew && (
+        <div className="max-w-md space-y-1.5">
+          <Label htmlFor="edit-cover">Cover image</Label>
+          {post.coverUrl && (
+            <img
+              src={post.coverUrl}
+              alt={post.title}
+              className="h-32 w-full rounded-lg object-cover"
+            />
+          )}
+          {/* Its own <form>, deliberately not nested inside the one below —
+              a <form> inside a <form> is invalid HTML, and this is a
+              separate multipart action from the text-fields Save anyway. */}
+          <form
+            onSubmit={onCoverChange}
+            className="flex flex-wrap items-center gap-2"
+          >
+            <input
+              id="edit-cover"
+              name="cover"
+              type="file"
+              accept="image/jpeg,image/png"
+              required
+              className="block flex-1 text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+            />
+            <Button
+              type="submit"
+              size="small"
+              variant="outlined"
+              disabled={coverBusy}
+            >
+              {coverBusy
+                ? 'Uploading…'
+                : post.coverUrl
+                  ? 'Change cover'
+                  : 'Add cover'}
+            </Button>
+          </form>
+        </div>
+      )}
+
       <form onSubmit={onSubmit} className="grid gap-8 lg:grid-cols-2">
         <div className="space-y-4">
           <div className="space-y-1.5">
@@ -167,7 +229,7 @@ export default function PostEditor() {
             />
           </div>
 
-          {isNew ? (
+          {isNew && (
             <div className="space-y-1.5">
               <Label htmlFor="cover">Cover image (optional, JPEG/PNG)</Label>
               <input
@@ -179,17 +241,6 @@ export default function PostEditor() {
                 className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
               />
             </div>
-          ) : (
-            post.coverUrl && (
-              <div className="space-y-1.5">
-                <Label>Cover image</Label>
-                <img
-                  src={post.coverUrl}
-                  alt={post.title}
-                  className="h-32 w-full rounded-lg object-cover"
-                />
-              </div>
-            )
           )}
 
           <div className="space-y-1.5">

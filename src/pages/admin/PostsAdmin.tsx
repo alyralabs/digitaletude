@@ -30,7 +30,7 @@ export default function PostsAdmin() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-color">
-          Posts ({posts.length})
+          Blog posts ({posts.length})
         </h2>
         <Button size="small" onClick={() => navigate('/admin/posts/new')}>
           New post

@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import { NavLink } from 'react-router'
+import { useEffect, useState } from 'react'
+import { NavLink, useNavigate } from 'react-router'
 import { Bars } from '@primeicons/react/bars'
 import { Moon } from '@primeicons/react/moon'
 import { Sun } from '@primeicons/react/sun'
 import { Times } from '@primeicons/react/times'
+import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerBackdrop,
@@ -18,6 +19,7 @@ import {
 import { ToggleSwitch } from '@/components/ui/toggleswitch'
 import Logo from './Logo'
 import { useTheme } from '../context/theme'
+import { supabaseClient } from '../lib/supabase'
 
 const navItems = [
   { to: '/', label: 'Home', end: true },
@@ -32,6 +34,31 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
     'text-sm font-medium transition-colors',
     isActive ? 'text-primary' : 'text-muted-color hover:text-color',
   ].join(' ')
+
+// Whether there's a live admin session, so the public site can offer a
+// quick way back into /admin instead of typing the URL. Supabase may not
+// be configured at all (missing env vars) — that only breaks admin routes
+// by design, so this fails silently to "not signed in" rather than
+// throwing across the whole public site.
+function useAdminSignedIn() {
+  const [signedIn, setSignedIn] = useState(false)
+
+  useEffect(() => {
+    let client
+    try {
+      client = supabaseClient()
+    } catch {
+      return
+    }
+    client.auth.getSession().then(({ data }) => setSignedIn(!!data.session))
+    const { data } = client.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(!!session)
+    })
+    return () => data.subscription.unsubscribe()
+  }, [])
+
+  return signedIn
+}
 
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
@@ -48,8 +75,25 @@ function ThemeToggle() {
   )
 }
 
+function AdminLink({ onClick }: { onClick?: () => void }) {
+  const navigate = useNavigate()
+  return (
+    <Button
+      size="small"
+      variant="outlined"
+      onClick={() => {
+        onClick?.()
+        navigate('/admin')
+      }}
+    >
+      Admin
+    </Button>
+  )
+}
+
 export default function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const adminSignedIn = useAdminSignedIn()
 
   return (
     <header className="sticky top-0 z-50 border-b border-surface bg-page/85 backdrop-blur-sm">
@@ -68,7 +112,8 @@ export default function NavBar() {
           ))}
         </ul>
 
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-4 md:flex">
+          {adminSignedIn && <AdminLink />}
           <ThemeToggle />
         </div>
 
@@ -107,6 +152,11 @@ export default function NavBar() {
                     </li>
                   ))}
                 </ul>
+                {adminSignedIn && (
+                  <div className="mt-4">
+                    <AdminLink onClick={() => setDrawerOpen(false)} />
+                  </div>
+                )}
                 <div className="mt-6 border-t border-surface pt-6">
                   <ThemeToggle />
                 </div>

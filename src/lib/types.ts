@@ -1,3 +1,15 @@
+// Camera-settings subset shown as a viewfinder-style overlay — not a full
+// EXIF dump. Every field is optional; the server omits whatever the camera
+// didn't record. Pre-formatted strings (e.g. "f/2.8", "ISO 400") — no
+// per-field formatting on this side, just join whatever's present.
+export type PhotoExif = {
+  camera?: string
+  aperture?: string
+  shutterSpeed?: string
+  iso?: string
+  focalLength?: string
+}
+
 export type Photo = {
   id: string
   title: string
@@ -8,6 +20,7 @@ export type Photo = {
   createdAt: string
   originalUrl: string
   thumbnailUrl: string
+  exif?: PhotoExif
 }
 
 // Opaque bag returned as-is by the server. `links` is the one convention the

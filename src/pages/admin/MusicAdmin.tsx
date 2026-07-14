@@ -244,6 +244,7 @@ function AlbumCard({
   const [editing, setEditing] = useState(false)
   const [title, setTitle] = useState(album.title)
   const [description, setDescription] = useState(album.description)
+  const [coverBusy, setCoverBusy] = useState(false)
 
   async function onSave() {
     await adminFetch(`/api/admin/albums/${album.id}`, {
@@ -253,6 +254,22 @@ function AlbumCard({
     })
     setEditing(false)
     revalidate()
+  }
+
+  async function onCoverChange(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const form = e.currentTarget
+    setCoverBusy(true)
+    try {
+      await adminFetch(`/api/admin/albums/${album.id}/cover`, {
+        method: 'PATCH',
+        body: new FormData(form),
+      })
+      form.reset()
+      revalidate()
+    } finally {
+      setCoverBusy(false)
+    }
   }
 
   return (
@@ -282,6 +299,34 @@ function AlbumCard({
                 }
                 className="w-full"
               />
+              <div className="space-y-1.5">
+                <Label htmlFor={`album-cover-${album.id}`}>Cover</Label>
+                <form
+                  onSubmit={onCoverChange}
+                  className="flex flex-wrap items-center gap-2"
+                >
+                  <input
+                    id={`album-cover-${album.id}`}
+                    name="cover"
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    required
+                    className="block flex-1 text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+                  />
+                  <Button
+                    type="submit"
+                    size="small"
+                    variant="outlined"
+                    disabled={coverBusy}
+                  >
+                    {coverBusy
+                      ? 'Uploading…'
+                      : album.coverUrl
+                        ? 'Change cover'
+                        : 'Add cover'}
+                  </Button>
+                </form>
+              </div>
               <div className="flex gap-2">
                 <Button size="small" onClick={onSave}>
                   Save
@@ -354,6 +399,7 @@ function TrackRow({
   const [trackNumber, setTrackNumber] = useState(
     track.trackNumber?.toString() ?? '',
   )
+  const [coverBusy, setCoverBusy] = useState(false)
 
   async function onSave() {
     await adminFetch(`/api/admin/tracks/${track.id}`, {
@@ -368,6 +414,22 @@ function TrackRow({
     })
     setEditing(false)
     revalidate()
+  }
+
+  async function onCoverChange(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const form = e.currentTarget
+    setCoverBusy(true)
+    try {
+      await adminFetch(`/api/admin/tracks/${track.id}/cover`, {
+        method: 'PATCH',
+        body: new FormData(form),
+      })
+      form.reset()
+      revalidate()
+    } finally {
+      setCoverBusy(false)
+    }
   }
 
   return (
@@ -413,6 +475,34 @@ function TrackRow({
               }
               className="w-24 rounded-md border border-surface bg-transparent px-2 py-1 text-sm text-color"
             />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor={`track-cover-${track.id}`}>Cover</Label>
+            <form
+              onSubmit={onCoverChange}
+              className="flex flex-wrap items-center gap-2"
+            >
+              <input
+                id={`track-cover-${track.id}`}
+                name="cover"
+                type="file"
+                accept="image/jpeg,image/png"
+                required
+                className="block flex-1 text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+              />
+              <Button
+                type="submit"
+                size="small"
+                variant="outlined"
+                disabled={coverBusy}
+              >
+                {coverBusy
+                  ? 'Uploading…'
+                  : track.coverUrl
+                    ? 'Change cover'
+                    : 'Add cover'}
+              </Button>
+            </form>
           </div>
           <div className="flex gap-2">
             <Button size="small" onClick={onSave}>

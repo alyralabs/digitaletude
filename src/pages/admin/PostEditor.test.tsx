@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { PrimeReactProvider } from '@primereact/core'
@@ -234,5 +234,69 @@ describe('PostEditor edit mode — published', () => {
     const [path, init] = vi.mocked(adminFetch).mock.calls[1]
     expect(path).toBe('/api/admin/posts/p1/unpublish')
     expect(init?.method).toBe('PATCH')
+  })
+})
+
+describe('PostEditor cover upload (edit mode)', () => {
+  it('offers "Add cover" for a post with none, and PATCHes .../cover with the file', async () => {
+    vi.mocked(adminFetch).mockResolvedValueOnce(post({ coverUrl: null }))
+    renderEditor('/admin/posts/p1')
+
+    await screen.findByDisplayValue('A Post')
+    expect(
+      screen.getByRole('button', { name: 'Add cover' }),
+    ).toBeInTheDocument()
+
+    vi.mocked(adminFetch).mockResolvedValueOnce(post({ coverUrl: null }))
+    const file = new File(['bytes'], 'cover.jpg', { type: 'image/jpeg' })
+    fireEvent.change(screen.getByLabelText('Cover image'), {
+      target: { files: [file] },
+    })
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Add cover' }).closest('form')!,
+    )
+
+    await waitFor(() => expect(adminFetch).toHaveBeenCalledTimes(2))
+    const [path, init] = vi.mocked(adminFetch).mock.calls[1]
+    expect(path).toBe('/api/admin/posts/p1/cover')
+    expect(init?.method).toBe('PATCH')
+    expect((init?.body as FormData).get('cover')).toBeInstanceOf(File)
+  })
+
+  it('shows the existing thumbnail and offers "Change cover" for a post that has one', async () => {
+    vi.mocked(adminFetch).mockResolvedValueOnce(
+      post({ coverUrl: 'https://example.com/cover.jpg' }),
+    )
+    renderEditor('/admin/posts/p1')
+
+    await screen.findByDisplayValue('A Post')
+    expect(screen.getByAltText('A Post')).toHaveAttribute(
+      'src',
+      'https://example.com/cover.jpg',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Change cover' }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows an error message instead of crashing on failure', async () => {
+    vi.mocked(adminFetch).mockResolvedValueOnce(post({ coverUrl: null }))
+    renderEditor('/admin/posts/p1')
+
+    await screen.findByDisplayValue('A Post')
+    vi.mocked(adminFetch).mockRejectedValueOnce(
+      new Error('cover update failed: too big'),
+    )
+    const file = new File(['bytes'], 'cover.jpg', { type: 'image/jpeg' })
+    fireEvent.change(screen.getByLabelText('Cover image'), {
+      target: { files: [file] },
+    })
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Add cover' }).closest('form')!,
+    )
+
+    expect(
+      await screen.findByText('cover update failed: too big'),
+    ).toBeInTheDocument()
   })
 })
