@@ -1,26 +1,32 @@
-import { createBrowserRouter, redirect, RouterProvider } from 'react-router'
+import type { ComponentType } from 'react'
+import {
+  createBrowserRouter,
+  redirect,
+  RouterProvider,
+  type LoaderFunction,
+} from 'react-router'
 import Layout from './components/Layout'
 import RouteError from './components/RouteError'
 import About from './pages/About'
-import AdminLayout, { loader as adminLoader } from './pages/admin/AdminLayout'
-import AdminLogin from './pages/admin/AdminLogin'
-import MusicAdmin, {
-  loader as musicAdminLoader,
-} from './pages/admin/MusicAdmin'
-import PhotosAdmin, {
-  loader as photosAdminLoader,
-} from './pages/admin/PhotosAdmin'
-import PostEditor, {
-  loader as postEditorLoader,
-} from './pages/admin/PostEditor'
-import PostsAdmin, {
-  loader as postsAdminLoader,
-} from './pages/admin/PostsAdmin'
 import Blog, { loader as blogLoader } from './pages/Blog'
 import BlogPost, { loader as blogPostLoader } from './pages/BlogPost'
 import Home from './pages/Home'
 import Music, { loader as musicLoader } from './pages/Music'
 import Photography, { loader as photographyLoader } from './pages/Photography'
+
+// Admin pages are behind auth and cold-loaded, so they're the natural
+// code-split boundary: react-router's per-route `lazy` keeps them (and
+// their logic) out of the public bundle entirely. Our admin modules export
+// `default` (component) + optionally `loader`; this adapts that shape to
+// the route-properties object `lazy` expects.
+function lazyAdmin(
+  load: () => Promise<{ default: ComponentType; loader?: LoaderFunction }>,
+) {
+  return async () => {
+    const { default: Component, loader } = await load()
+    return loader ? { Component, loader } : { Component }
+  }
+}
 
 const router = createBrowserRouter([
   {
@@ -54,42 +60,39 @@ const router = createBrowserRouter([
         loader: blogPostLoader,
         errorElement: <RouteError />,
       },
-      { path: 'admin/login', element: <AdminLogin /> },
+      {
+        path: 'admin/login',
+        lazy: lazyAdmin(() => import('./pages/admin/AdminLogin')),
+      },
       {
         path: 'admin',
-        element: <AdminLayout />,
-        loader: adminLoader,
+        lazy: lazyAdmin(() => import('./pages/admin/AdminLayout')),
         errorElement: <RouteError />,
         children: [
           { index: true, loader: () => redirect('/admin/photos') },
           {
             path: 'photos',
-            element: <PhotosAdmin />,
-            loader: photosAdminLoader,
+            lazy: lazyAdmin(() => import('./pages/admin/PhotosAdmin')),
             errorElement: <RouteError />,
           },
           {
             path: 'music',
-            element: <MusicAdmin />,
-            loader: musicAdminLoader,
+            lazy: lazyAdmin(() => import('./pages/admin/MusicAdmin')),
             errorElement: <RouteError />,
           },
           {
             path: 'posts',
-            element: <PostsAdmin />,
-            loader: postsAdminLoader,
+            lazy: lazyAdmin(() => import('./pages/admin/PostsAdmin')),
             errorElement: <RouteError />,
           },
           {
             path: 'posts/new',
-            element: <PostEditor />,
-            loader: postEditorLoader,
+            lazy: lazyAdmin(() => import('./pages/admin/PostEditor')),
             errorElement: <RouteError />,
           },
           {
             path: 'posts/:id',
-            element: <PostEditor />,
-            loader: postEditorLoader,
+            lazy: lazyAdmin(() => import('./pages/admin/PostEditor')),
             errorElement: <RouteError />,
           },
         ],

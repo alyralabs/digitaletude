@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { InputText } from '@/components/ui/inputtext'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import FileInput from '../../components/FileInput'
 import { adminFetch, apiFetch } from '../../lib/api'
 import type { Photo } from '../../lib/types'
 
@@ -54,13 +55,12 @@ export default function PhotosAdmin() {
         <form onSubmit={onUpload} className="max-w-md space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="file">Image (JPEG/PNG, ≤ 15 MB)</Label>
-            <input
+            <FileInput
               id="file"
               name="file"
-              type="file"
               accept="image/jpeg,image/png"
               required
-              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+              className="w-full"
             />
           </div>
           <div className="space-y-1.5">
@@ -132,12 +132,16 @@ function PhotoCard({
         <div className="space-y-2">
           <InputText
             value={title}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
             className="w-full"
           />
           <Textarea
             value={description}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              setDescription(e.target.value)
+            }
             className="w-full"
           />
           <div className="flex gap-2">

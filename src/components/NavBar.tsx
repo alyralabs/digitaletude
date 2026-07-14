@@ -19,7 +19,6 @@ import {
 import { ToggleSwitch } from '@/components/ui/toggleswitch'
 import Logo from './Logo'
 import { useTheme } from '../context/theme'
-import { supabaseClient } from '../lib/supabase'
 
 const navItems = [
   { to: '/', label: 'Home', end: true },
@@ -36,25 +35,42 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
   ].join(' ')
 
 // Whether there's a live admin session, so the public site can offer a
-// quick way back into /admin instead of typing the URL. Supabase may not
-// be configured at all (missing env vars) — that only breaks admin routes
-// by design, so this fails silently to "not signed in" rather than
-// throwing across the whole public site.
+// quick way back into /admin instead of typing the URL.
+//
+// supabase-js is ~400KB and this hook runs on every public page, so it's
+// deliberately kept out of the static import graph: a cheap localStorage
+// probe (supabase persists sessions under sb-*-auth-token) decides whether
+// to dynamically import it at all. Anonymous visitors — the vast majority —
+// never download the supabase chunk. The catch also preserves the existing
+// invariant that missing Supabase env vars only break admin routes, never
+// the public site.
 function useAdminSignedIn() {
   const [signedIn, setSignedIn] = useState(false)
 
   useEffect(() => {
-    let client
-    try {
-      client = supabaseClient()
-    } catch {
-      return
+    const hasStoredSession = Object.keys(localStorage).some(
+      (key) => key.startsWith('sb-') && key.endsWith('-auth-token'),
+    )
+    if (!hasStoredSession) return
+
+    let cancelled = false
+    let unsubscribe = () => {}
+    import('../lib/supabase')
+      .then(({ supabaseClient }) => {
+        const client = supabaseClient()
+        client.auth.getSession().then(({ data }) => {
+          if (!cancelled) setSignedIn(!!data.session)
+        })
+        const { data } = client.auth.onAuthStateChange((_event, session) => {
+          setSignedIn(!!session)
+        })
+        unsubscribe = () => data.subscription.unsubscribe()
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+      unsubscribe()
     }
-    client.auth.getSession().then(({ data }) => setSignedIn(!!data.session))
-    const { data } = client.auth.onAuthStateChange((_event, session) => {
-      setSignedIn(!!session)
-    })
-    return () => data.subscription.unsubscribe()
   }, [])
 
   return signedIn

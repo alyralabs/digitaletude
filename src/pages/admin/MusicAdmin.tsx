@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { InputText } from '@/components/ui/inputtext'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import FileInput from '../../components/FileInput'
 import { adminFetch, apiFetch } from '../../lib/api'
 import type { Album, MusicPayload, Track } from '../../lib/types'
 
@@ -102,12 +103,11 @@ export default function MusicAdmin() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="album-cover">Cover (optional, JPEG/PNG)</Label>
-            <input
+            <FileInput
               id="album-cover"
               name="cover"
-              type="file"
               accept="image/jpeg,image/png"
-              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+              className="w-full"
             />
           </div>
           <Button type="submit" disabled={albumBusy}>
@@ -121,13 +121,12 @@ export default function MusicAdmin() {
         <form onSubmit={onTrackUpload} className="max-w-md space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="track-file">Audio (MP3, ≤ 50 MB)</Label>
-            <input
+            <FileInput
               id="track-file"
               name="file"
-              type="file"
               accept="audio/mpeg,.mp3"
               required
-              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+              className="w-full"
             />
           </div>
           <div className="space-y-1.5">
@@ -146,12 +145,11 @@ export default function MusicAdmin() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="track-cover">Cover (optional, JPEG/PNG)</Label>
-            <input
+            <FileInput
               id="track-cover"
               name="cover"
-              type="file"
               accept="image/jpeg,image/png"
-              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+              className="w-full"
             />
           </div>
           <div className="space-y-1.5">
@@ -201,6 +199,7 @@ export default function MusicAdmin() {
               albums={music.albums}
               onDeleteAlbum={onDeleteAlbum}
               onDeleteTrack={onDeleteTrack}
+              onError={setError}
             />
           ))
         )}
@@ -220,6 +219,7 @@ export default function MusicAdmin() {
                 track={track}
                 albums={music.albums}
                 onDelete={onDeleteTrack}
+                onError={setError}
               />
             ))}
           </div>
@@ -234,11 +234,13 @@ function AlbumCard({
   albums,
   onDeleteAlbum,
   onDeleteTrack,
+  onError,
 }: {
   album: Album
   albums: Album[]
   onDeleteAlbum: (album: Album) => void
   onDeleteTrack: (track: Track) => void
+  onError: (message: string | null) => void
 }) {
   const { revalidate } = useRevalidator()
   const [editing, setEditing] = useState(false)
@@ -247,19 +249,25 @@ function AlbumCard({
   const [coverBusy, setCoverBusy] = useState(false)
 
   async function onSave() {
-    await adminFetch(`/api/admin/albums/${album.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description }),
-    })
-    setEditing(false)
-    revalidate()
+    onError(null)
+    try {
+      await adminFetch(`/api/admin/albums/${album.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description }),
+      })
+      setEditing(false)
+      revalidate()
+    } catch (err) {
+      onError(err instanceof Error ? err.message : 'save failed')
+    }
   }
 
   async function onCoverChange(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
     setCoverBusy(true)
+    onError(null)
     try {
       await adminFetch(`/api/admin/albums/${album.id}/cover`, {
         method: 'PATCH',
@@ -267,6 +275,8 @@ function AlbumCard({
       })
       form.reset()
       revalidate()
+    } catch (err) {
+      onError(err instanceof Error ? err.message : 'cover update failed')
     } finally {
       setCoverBusy(false)
     }
@@ -305,13 +315,12 @@ function AlbumCard({
                   onSubmit={onCoverChange}
                   className="flex flex-wrap items-center gap-2"
                 >
-                  <input
+                  <FileInput
                     id={`album-cover-${album.id}`}
                     name="cover"
-                    type="file"
                     accept="image/jpeg,image/png"
                     required
-                    className="block flex-1 text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+                    className="flex-1"
                   />
                   <Button
                     type="submit"
@@ -374,6 +383,7 @@ function AlbumCard({
               track={track}
               albums={albums}
               onDelete={onDeleteTrack}
+              onError={onError}
             />
           ))}
         </div>
@@ -386,10 +396,12 @@ function TrackRow({
   track,
   albums,
   onDelete,
+  onError,
 }: {
   track: Track
   albums: Album[]
   onDelete: (track: Track) => void
+  onError: (message: string | null) => void
 }) {
   const { revalidate } = useRevalidator()
   const [editing, setEditing] = useState(false)
@@ -402,24 +414,30 @@ function TrackRow({
   const [coverBusy, setCoverBusy] = useState(false)
 
   async function onSave() {
-    await adminFetch(`/api/admin/tracks/${track.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title,
-        description,
-        albumId,
-        trackNumber: trackNumber ? Number(trackNumber) : 0,
-      }),
-    })
-    setEditing(false)
-    revalidate()
+    onError(null)
+    try {
+      await adminFetch(`/api/admin/tracks/${track.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          description,
+          albumId,
+          trackNumber: trackNumber ? Number(trackNumber) : 0,
+        }),
+      })
+      setEditing(false)
+      revalidate()
+    } catch (err) {
+      onError(err instanceof Error ? err.message : 'save failed')
+    }
   }
 
   async function onCoverChange(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
     setCoverBusy(true)
+    onError(null)
     try {
       await adminFetch(`/api/admin/tracks/${track.id}/cover`, {
         method: 'PATCH',
@@ -427,6 +445,8 @@ function TrackRow({
       })
       form.reset()
       revalidate()
+    } catch (err) {
+      onError(err instanceof Error ? err.message : 'cover update failed')
     } finally {
       setCoverBusy(false)
     }
@@ -482,13 +502,12 @@ function TrackRow({
               onSubmit={onCoverChange}
               className="flex flex-wrap items-center gap-2"
             >
-              <input
+              <FileInput
                 id={`track-cover-${track.id}`}
                 name="cover"
-                type="file"
                 accept="image/jpeg,image/png"
                 required
-                className="block flex-1 text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+                className="flex-1"
               />
               <Button
                 type="submit"

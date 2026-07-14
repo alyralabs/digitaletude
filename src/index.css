@@ -163,13 +163,18 @@ html {
   font-size: 106.25%; /* ~17px against a 16px browser default */
 }
 
-@media (min-width: 1024px) {
+/* rem, not px, to stay in lockstep with Tailwind v4's rem-based
+   breakpoints (lg = 64rem, 2xl = 96rem): media-query rem resolves against
+   the browser default font size (not the html override above — no
+   circularity), so for a user with a non-16px default these fire at the
+   same moment the lg:/2xl: utilities do. */
+@media (min-width: 64rem) {
   html {
     font-size: 112.5%; /* ~18px */
   }
 }
 
-@media (min-width: 1536px) {
+@media (min-width: 96rem) {
   html {
     font-size: 118.75%; /* ~19px */
   }

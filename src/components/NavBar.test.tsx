@@ -124,7 +124,20 @@ describe('theme toggle', () => {
 })
 
 describe('admin quick-link', () => {
-  it('is not shown when there is no admin session', async () => {
+  it('never even probes Supabase when no stored session key exists', async () => {
+    renderNavBar()
+
+    // The localStorage pre-check short-circuits before the (lazily
+    // imported) client is touched — anonymous visitors must not pay for
+    // the supabase chunk at all.
+    expect(
+      screen.queryByRole('button', { name: 'Admin' }),
+    ).not.toBeInTheDocument()
+    expect(mockGetSession).not.toHaveBeenCalled()
+  })
+
+  it('is not shown when a stored key exists but the session is gone', async () => {
+    localStorage.setItem('sb-testref-auth-token', '{}')
     renderNavBar()
 
     await waitFor(() => expect(mockGetSession).toHaveBeenCalled())
@@ -134,6 +147,7 @@ describe('admin quick-link', () => {
   })
 
   it('appears once a session is found, and navigates to /admin when clicked', async () => {
+    localStorage.setItem('sb-testref-auth-token', '{}')
     mockGetSession.mockResolvedValue({
       data: { session: { access_token: 'fake' } },
     })

@@ -217,6 +217,49 @@ describe('MusicAdmin album cover upload', () => {
     await waitFor(() => expect(apiFetch).toHaveBeenCalledTimes(2))
   })
 
+  it('shows an error message instead of failing silently when the upload is rejected', async () => {
+    vi.mocked(adminFetch).mockRejectedValue(
+      new Error('only JPEG and PNG are accepted'),
+    )
+    const user = userEvent.setup()
+    renderAdmin()
+
+    const albumsSection = (await screen.findByText('Albums (1)')).closest(
+      'section',
+    )!
+    await user.click(
+      within(albumsSection).getByRole('button', { name: 'Edit' }),
+    )
+
+    const file = new File(['bytes'], 'cover.gif', { type: 'image/gif' })
+    fireEvent.change(screen.getByLabelText('Cover'), {
+      target: { files: [file] },
+    })
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Add cover' }).closest('form')!,
+    )
+
+    expect(
+      await screen.findByText('only JPEG and PNG are accepted'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows an error message when an inline album save fails', async () => {
+    vi.mocked(adminFetch).mockRejectedValue(new Error('save failed: nope'))
+    const user = userEvent.setup()
+    renderAdmin()
+
+    const albumsSection = (await screen.findByText('Albums (1)')).closest(
+      'section',
+    )!
+    await user.click(
+      within(albumsSection).getByRole('button', { name: 'Edit' }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(await screen.findByText('save failed: nope')).toBeInTheDocument()
+  })
+
   it('offers "Change cover" instead of "Add cover" when the album already has one', async () => {
     vi.mocked(apiFetch).mockResolvedValue({
       albums: [album({ coverUrl: 'https://example.com/cover.jpg' })],
@@ -265,6 +308,32 @@ describe('MusicAdmin track cover upload', () => {
     expect((init?.body as FormData).get('cover')).toBeInstanceOf(File)
 
     await waitFor(() => expect(apiFetch).toHaveBeenCalledTimes(2))
+  })
+
+  it('shows an error message instead of failing silently when the upload is rejected', async () => {
+    vi.mocked(adminFetch).mockRejectedValue(
+      new Error('upload exceeds size limit'),
+    )
+    const user = userEvent.setup()
+    renderAdmin()
+
+    await screen.findByText('Original Track')
+    const singlesSection = screen.getByText('Singles (1)').closest('section')!
+    await user.click(
+      within(singlesSection).getByRole('button', { name: 'Edit' }),
+    )
+
+    const file = new File(['bytes'], 'cover.jpg', { type: 'image/jpeg' })
+    fireEvent.change(screen.getByLabelText('Cover'), {
+      target: { files: [file] },
+    })
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Add cover' }).closest('form')!,
+    )
+
+    expect(
+      await screen.findByText('upload exceeds size limit'),
+    ).toBeInTheDocument()
   })
 })
 

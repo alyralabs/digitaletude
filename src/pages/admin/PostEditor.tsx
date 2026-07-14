@@ -10,6 +10,7 @@ import { InputText } from '@/components/ui/inputtext'
 import { Label } from '@/components/ui/label'
 import { Tag } from '@/components/ui/tag'
 import { Textarea } from '@/components/ui/textarea'
+import FileInput from '../../components/FileInput'
 import PostBody from '../../components/PostBody'
 import { adminFetch } from '../../lib/api'
 import type { Post } from '../../lib/types'
@@ -163,13 +164,12 @@ export default function PostEditor() {
             onSubmit={onCoverChange}
             className="flex flex-wrap items-center gap-2"
           >
-            <input
+            <FileInput
               id="edit-cover"
               name="cover"
-              type="file"
               accept="image/jpeg,image/png"
               required
-              className="block flex-1 text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+              className="flex-1"
             />
             <Button
               type="submit"
@@ -232,13 +232,12 @@ export default function PostEditor() {
           {isNew && (
             <div className="space-y-1.5">
               <Label htmlFor="cover">Cover image (optional, JPEG/PNG)</Label>
-              <input
+              <FileInput
                 id="cover"
                 name="cover"
                 ref={coverInputRef}
-                type="file"
                 accept="image/jpeg,image/png"
-                className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
+                className="w-full"
               />
             </div>
           )}
