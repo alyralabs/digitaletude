@@ -54,7 +54,7 @@ export default function AdminLogin() {
             onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           />
         </div>
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
         <Button type="submit" disabled={busy} className="w-full">
           {busy ? 'Signing in…' : 'Sign in'}
         </Button>

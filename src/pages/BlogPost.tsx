@@ -18,7 +18,10 @@ export default function BlogPost() {
   const post = useLoaderData<Post>()
 
   return (
-    <article className="space-y-6">
+    // Capped at a readable measure independent of how wide the page shell
+    // gets (plans/04-styling.md) — long-form text shouldn't stretch across
+    // an ultrawide viewport just because the container can.
+    <article className="mx-auto max-w-prose space-y-6">
       {post.coverUrl && (
         <img
           src={post.coverUrl}

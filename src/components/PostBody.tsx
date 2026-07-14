@@ -10,8 +10,8 @@ export default function PostBody({ markdown }: { markdown: string }) {
         [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-color
         [&_a]:text-primary [&_a]:underline
         [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6
-        [&_code]:rounded [&_code]:bg-surface-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-sm dark:[&_code]:bg-surface-800
-        [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-surface-100 [&_pre]:p-4 dark:[&_pre]:bg-surface-800
+        [&_code]:rounded [&_code]:bg-panel [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-sm
+        [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-panel [&_pre]:p-4
         [&_pre_code]:bg-transparent [&_pre_code]:p-0
         [&_blockquote]:border-l-2 [&_blockquote]:border-surface [&_blockquote]:pl-4 [&_blockquote]:text-muted-color
         [&_img]:rounded-lg"

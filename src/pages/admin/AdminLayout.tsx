@@ -27,14 +27,19 @@ export default function AdminLayout() {
 
   // Keep the guard live: sign-out (this tab or another) kicks back to login.
   useEffect(() => {
-    const { data } = supabaseClient().auth.onAuthStateChange((_event, session) => {
-      if (!session) navigate('/admin/login')
-    })
+    const { data } = supabaseClient().auth.onAuthStateChange(
+      (_event, session) => {
+        if (!session) navigate('/admin/login')
+      },
+    )
     return () => data.subscription.unsubscribe()
   }, [navigate])
 
   return (
-    <div className="space-y-8">
+    // Admin is explicitly out of scope for the wide public layout (see
+    // plans/04-styling.md) — re-caps to roughly the old site-wide width so
+    // admin doesn't stretch to ~1800px along with the public pages.
+    <div className="mx-auto max-w-5xl space-y-8">
       <div className="flex items-center justify-between border-b border-surface pb-4">
         <div className="flex items-center gap-5">
           <h1 className="text-lg font-semibold text-color">Admin</h1>

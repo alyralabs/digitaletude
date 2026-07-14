@@ -1,60 +1,119 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
+/* Display font for headings only (see --font-display below); self-hosted
+   via @fontsource rather than a Google Fonts <link> — no external runtime
+   request, bundled by Vite like any other asset. Only the two weights
+   headings actually use: 600 (font-semibold, h2/h3) and 700 (font-bold, h1). */
+@import '@fontsource/space-grotesk/600.css';
+@import '@fontsource/space-grotesk/700.css';
 
 /* Make Tailwind's dark: utilities follow the .dark class (toggled by ThemeProvider) */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Design tokens, three layers (see plans/04-styling.md):
+ *  1. Raw palette (--p-primary-*, --p-surface-*) — the only place literal
+ *     color values live; retheme by editing here, nothing else.
+ *  2. Semantic role tokens (--color-page/-panel/-ink/-ink-muted/-line/
+ *     -accent/-accent-ink/-danger) — named for where they're used, not
+ *     what color they are.
+ *  3. Utility registration (@theme inline below) for the roles
+ *     tailwindcss-primeui doesn't already expose as a utility class.
+ *     text-color/text-muted-color/border-surface/bg-primary/text-primary
+ *     are already semantic utilities from the primeui plugin, aliased
+ *     below to the same roles — no need to duplicate those as new
+ *     utility names, only bg-page/bg-panel/text-danger are net-new.
+ */
+
 :root {
-  --p-primary-50: var(--color-indigo-50);
-  --p-primary-100: var(--color-indigo-100);
-  --p-primary-200: var(--color-indigo-200);
-  --p-primary-300: var(--color-indigo-300);
-  --p-primary-400: var(--color-indigo-400);
-  --p-primary-500: var(--color-indigo-500);
-  --p-primary-600: var(--color-indigo-600);
-  --p-primary-700: var(--color-indigo-700);
-  --p-primary-800: var(--color-indigo-800);
-  --p-primary-900: var(--color-indigo-900);
-  --p-primary-950: var(--color-indigo-950);
+  /* Raw palette: primary = muted cyan (was Tailwind's `indigo`, the "dark
+     purple/blue" complaint — indigo showed up in both themes, not just
+     dark). Hand-picked oklch stops, not a stock Tailwind swatch: chroma
+     stays low (~0.03–0.08) throughout for a muted/sophisticated read
+     rather than an electric one. */
+  --p-primary-50: oklch(97% 0.018 192);
+  --p-primary-100: oklch(94% 0.032 192);
+  --p-primary-200: oklch(88% 0.048 192);
+  --p-primary-300: oklch(80% 0.062 192);
+  --p-primary-400: oklch(70% 0.075 192);
+  --p-primary-500: oklch(60% 0.082 192);
+  --p-primary-600: oklch(48% 0.075 192);
+  --p-primary-700: oklch(40% 0.065 192);
+  --p-primary-800: oklch(33% 0.052 192);
+  --p-primary-900: oklch(26% 0.04 192);
+  --p-primary-950: oklch(18% 0.028 192);
+
+  /* Raw palette: surface = neutral graphite. Previously aliased to
+     Tailwind's `slate`, which carries a visible blue undertone that
+     compounded with the old indigo primary — chroma here stays near-zero
+     (~0.003–0.007) so it reads as true grey instead of blue-grey. */
   --p-surface-0: oklch(100% 0 0);
-  --p-surface-50: var(--color-slate-50);
-  --p-surface-100: var(--color-slate-100);
-  --p-surface-200: var(--color-slate-200);
-  --p-surface-300: var(--color-slate-300);
-  --p-surface-400: var(--color-slate-400);
-  --p-surface-500: var(--color-slate-500);
-  --p-surface-600: var(--color-slate-600);
-  --p-surface-700: var(--color-slate-700);
-  --p-surface-800: var(--color-slate-800);
-  --p-surface-900: var(--color-slate-900);
-  --p-surface-950: var(--color-slate-950);
+  --p-surface-50: oklch(98% 0.003 250);
+  --p-surface-100: oklch(95% 0.004 250);
+  --p-surface-200: oklch(90% 0.005 250);
+  --p-surface-300: oklch(82% 0.006 250);
+  --p-surface-400: oklch(64% 0.007 250);
+  --p-surface-500: oklch(50% 0.007 250);
+  --p-surface-600: oklch(40% 0.007 250);
+  --p-surface-700: oklch(37% 0.007 250);
+  --p-surface-800: oklch(30% 0.006 250);
+  --p-surface-900: oklch(22% 0.005 250);
+  --p-surface-950: oklch(13% 0.004 250);
+
   --p-content-border-radius: 6px;
-  --p-primary-color: var(--p-primary-600);
-  --p-primary-contrast-color: var(--p-surface-0);
+
+  /* Semantic role tokens — light mode. */
+  --color-page: var(--p-surface-50);
+  --color-panel: var(--p-surface-0);
+  --color-ink: var(--p-surface-700);
+  --color-ink-muted: var(--p-surface-500);
+  --color-line: var(--p-surface-200);
+  --color-accent: var(--p-primary-600);
+  --color-accent-ink: var(--p-surface-0);
+  --color-danger: var(--color-red-600);
+
+  /* PrimeReact component tokens, bridged from the semantic roles above so
+     the app and the vendored ui/ primitives retheme from one place —
+     these were the source of the roles before today, now they're a
+     consumer of them. Hover/active states stay on raw numbered stops
+     directly; they're internal component states, not general-purpose
+     roles the app reaches for by name. */
+  --p-primary-color: var(--color-accent);
+  --p-primary-contrast-color: var(--color-accent-ink);
   --p-primary-hover-color: var(--p-primary-700);
   --p-primary-active-color: var(--p-primary-800);
-  --p-content-border-color: var(--p-surface-200);
+  --p-content-border-color: var(--color-line);
   --p-content-hover-background: var(--p-surface-100);
   --p-content-hover-color: var(--p-surface-800);
   --p-highlight-background: var(--p-primary-50);
   --p-highlight-color: var(--p-primary-700);
   --p-highlight-focus-background: var(--p-primary-100);
   --p-highlight-focus-color: var(--p-primary-800);
-  --p-text-color: var(--p-surface-700);
+  --p-text-color: var(--color-ink);
   --p-text-hover-color: var(--p-surface-800);
-  --p-text-muted-color: var(--p-surface-500);
+  --p-text-muted-color: var(--color-ink-muted);
   --p-text-hover-muted-color: var(--p-surface-600);
-
-  --background: var(--p-surface-50);
-  --foreground: var(--p-surface-950);
 }
 
 .dark {
-  --p-primary-color: var(--p-primary-400);
-  --p-primary-contrast-color: var(--p-surface-900);
+  /* Semantic role tokens — dark mode. Page and panel are two graphite
+     steps apart (900/800), not near-black — this is the actual "lighter
+     slate/graphite" fix, not just a hue swap (the old dark background
+     was --p-surface-950, effectively near-black). */
+  --color-page: var(--p-surface-900);
+  --color-panel: var(--p-surface-800);
+  --color-ink: var(--p-surface-0);
+  --color-ink-muted: var(--p-surface-400);
+  --color-line: var(--p-surface-700);
+  --color-accent: var(--p-primary-400);
+  --color-accent-ink: var(--p-surface-900);
+  --color-danger: var(--color-red-400);
+
+  --p-primary-color: var(--color-accent);
+  --p-primary-contrast-color: var(--color-accent-ink);
   --p-primary-hover-color: var(--p-primary-300);
   --p-primary-active-color: var(--p-primary-200);
-  --p-content-border-color: var(--p-surface-700);
+  --p-content-border-color: var(--color-line);
   --p-content-hover-background: var(--p-surface-800);
   --p-content-hover-color: var(--p-surface-0);
   --p-highlight-background: color-mix(
@@ -69,19 +128,44 @@
     transparent 76%
   );
   --p-highlight-focus-color: rgba(255, 255, 255, 0.87);
-  --p-text-color: var(--p-surface-0);
+  --p-text-color: var(--color-ink);
   --p-text-hover-color: var(--p-surface-0);
-  --p-text-muted-color: var(--p-surface-400);
+  --p-text-muted-color: var(--color-ink-muted);
   --p-text-hover-muted-color: var(--p-surface-300);
+}
 
-  --background: var(--p-surface-950);
-  --foreground: var(--p-surface-0);
+/* Registers bg-page/bg-panel/text-danger as real Tailwind utilities.
+   `inline` (not a plain @theme) makes the utility reference the live
+   custom property instead of snapshotting a value — that's what makes it
+   flip under .dark with zero dark: prefixes at call sites, and what makes
+   opacity modifiers like bg-page/85 work. */
+@theme inline {
+  --color-page: var(--color-page);
+  --color-panel: var(--color-panel);
+  --color-danger: var(--color-danger);
+}
+
+/* Registers the font-display utility (Logo.tsx uses it on a non-heading
+   element). Not dark-mode-reactive, so a plain @theme (not `inline`) is
+   enough — it's also what applies --font-display to h1–h3 below, since
+   @theme still defines the underlying custom property. */
+@theme {
+  --font-display: 'Space Grotesk', var(--font-sans);
 }
 
 body {
   margin: 0;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-page);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Applied at the element level, not a utility class, so every h1–h3 in the
+   app (including admin's, which gets no bespoke redesign) picks this up
+   for free — no per-file edits. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
 }

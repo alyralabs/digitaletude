@@ -19,7 +19,7 @@ export default function Blog() {
         {posts.length === 0 ? (
           <p className="text-muted-color">No posts yet.</p>
         ) : (
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {posts.map((post) => (
               <Link key={post.slug} to={`/blog/${post.slug}`}>
                 <Card className="overflow-hidden">

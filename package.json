@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/space-grotesk": "^5.2.10",
     "@primeicons/react": "^8.0.0-alpha.1",
     "@primeuix/utils": "^0.7.2",
     "@supabase/supabase-js": "^2.110.2",

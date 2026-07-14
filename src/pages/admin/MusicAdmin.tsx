@@ -107,7 +107,7 @@ export default function MusicAdmin() {
               name="cover"
               type="file"
               accept="image/jpeg,image/png"
-              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-surface-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color dark:file:bg-surface-800"
+              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
             />
           </div>
           <Button type="submit" disabled={albumBusy}>
@@ -127,7 +127,7 @@ export default function MusicAdmin() {
               type="file"
               accept="audio/mpeg,.mp3"
               required
-              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-surface-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color dark:file:bg-surface-800"
+              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
             />
           </div>
           <div className="space-y-1.5">
@@ -151,7 +151,7 @@ export default function MusicAdmin() {
               name="cover"
               type="file"
               accept="image/jpeg,image/png"
-              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-surface-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color dark:file:bg-surface-800"
+              className="block w-full text-sm text-muted-color file:mr-3 file:rounded-md file:border-0 file:bg-panel file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-color"
             />
           </div>
           <div className="space-y-1.5">
@@ -185,7 +185,7 @@ export default function MusicAdmin() {
         </form>
       </section>
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
       <section className="space-y-6">
         <h2 className="text-xl font-semibold text-color">

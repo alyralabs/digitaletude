@@ -20,20 +20,28 @@ export default function Photography() {
         {photos.length === 0 ? (
           <p className="text-muted-color">No photos yet.</p>
         ) : (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          // CSS-columns masonry: photos keep their real aspect ratio (no
+          // aspect-square/object-cover crop) instead of the old fixed grid.
+          // Each tile needs its own break-inside-avoid + margin — space-y/
+          // row gap don't apply across column boundaries, only column-gap
+          // (via `gap-4`) does. Column count steps up at wider breakpoints
+          // per plans/04-styling.md, not just more padding around a fixed
+          // count.
+          <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6">
             {photos.map((photo) => (
               <a
                 key={photo.id}
                 href={photo.originalUrl}
                 target="_blank"
                 rel="noreferrer"
+                className="mb-4 block break-inside-avoid"
               >
                 <img
                   src={photo.thumbnailUrl}
                   alt={photo.title}
                   width={photo.width}
                   height={photo.height}
-                  className="aspect-square w-full rounded-lg border border-surface object-cover"
+                  className="w-full rounded-lg border border-surface"
                 />
               </a>
             ))}
