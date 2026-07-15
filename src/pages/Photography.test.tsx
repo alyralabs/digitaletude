@@ -73,51 +73,6 @@ describe('Photography grid', () => {
 
     expect(await screen.findByText('No photos yet.')).toBeInTheDocument()
   })
-
-  it('shows no exif overlay for a photo with no exif data', async () => {
-    vi.mocked(fetchPhotos).mockResolvedValue([photo])
-
-    renderPhotography()
-
-    await screen.findByAltText('Mountain')
-    expect(screen.queryByText(/f\//)).not.toBeInTheDocument()
-    expect(screen.queryByText(/ISO/)).not.toBeInTheDocument()
-  })
-
-  it('renders an exif overlay with every extracted field', async () => {
-    vi.mocked(fetchPhotos).mockResolvedValue([
-      makePhoto({
-        exif: {
-          camera: 'Canon EOS R5',
-          aperture: 'f/2.8',
-          shutterSpeed: '1/250s',
-          iso: 'ISO 400',
-          focalLength: '50mm',
-        },
-      }),
-    ])
-
-    renderPhotography()
-
-    await screen.findByAltText('Mountain')
-    expect(screen.getByText('Canon EOS R5')).toBeInTheDocument()
-    expect(screen.getByText('f/2.8')).toBeInTheDocument()
-    expect(screen.getByText('1/250s')).toBeInTheDocument()
-    expect(screen.getByText('ISO 400')).toBeInTheDocument()
-    expect(screen.getByText('50mm')).toBeInTheDocument()
-  })
-
-  it('omits missing fields instead of rendering them blank', async () => {
-    vi.mocked(fetchPhotos).mockResolvedValue([
-      makePhoto({ exif: { aperture: 'f/4' } }),
-    ])
-
-    renderPhotography()
-
-    await screen.findByAltText('Mountain')
-    expect(screen.getByText('f/4')).toBeInTheDocument()
-    expect(screen.queryByText(/ISO/)).not.toBeInTheDocument()
-  })
 })
 
 describe('Photography carousel', () => {
@@ -159,6 +114,71 @@ describe('Photography carousel', () => {
       'href',
       'https://example.com/original-1.jpg',
     )
+  })
+
+  it('renders every extracted EXIF field for the open photo', async () => {
+    vi.mocked(fetchPhotos).mockResolvedValue([
+      makePhoto({
+        title: 'First',
+        thumbnailUrl: 'https://example.com/thumb-1.jpg',
+        originalUrl: 'https://example.com/original-1.jpg',
+        exif: {
+          camera: 'Canon EOS R5',
+          aperture: 'f/2.8',
+          shutterSpeed: '1/250s',
+          iso: 'ISO 400',
+          focalLength: '50mm',
+        },
+      }),
+    ])
+    const user = userEvent.setup()
+    renderPhotography()
+
+    await user.click(await screen.findByAltText('First'))
+    const dialog = await screen.findByRole('dialog')
+
+    expect(within(dialog).getByText('Canon EOS R5')).toBeInTheDocument()
+    expect(within(dialog).getByText('f/2.8')).toBeInTheDocument()
+    expect(within(dialog).getByText('1/250s')).toBeInTheDocument()
+    expect(within(dialog).getByText('ISO 400')).toBeInTheDocument()
+    expect(within(dialog).getByText('50mm')).toBeInTheDocument()
+  })
+
+  it('omits missing EXIF fields instead of rendering them blank', async () => {
+    vi.mocked(fetchPhotos).mockResolvedValue([
+      makePhoto({
+        title: 'First',
+        thumbnailUrl: 'https://example.com/thumb-1.jpg',
+        originalUrl: 'https://example.com/original-1.jpg',
+        exif: { aperture: 'f/4' },
+      }),
+    ])
+    const user = userEvent.setup()
+    renderPhotography()
+
+    await user.click(await screen.findByAltText('First'))
+    const dialog = await screen.findByRole('dialog')
+
+    expect(within(dialog).getByText('f/4')).toBeInTheDocument()
+    expect(within(dialog).queryByText(/ISO/)).not.toBeInTheDocument()
+  })
+
+  it('shows no EXIF bar for a photo with no exif data', async () => {
+    vi.mocked(fetchPhotos).mockResolvedValue([
+      makePhoto({
+        title: 'First',
+        thumbnailUrl: 'https://example.com/thumb-1.jpg',
+        originalUrl: 'https://example.com/original-1.jpg',
+      }),
+    ])
+    const user = userEvent.setup()
+    renderPhotography()
+
+    await user.click(await screen.findByAltText('First'))
+    const dialog = await screen.findByRole('dialog')
+
+    expect(within(dialog).queryByText(/f\//)).not.toBeInTheDocument()
+    expect(within(dialog).queryByText(/ISO/)).not.toBeInTheDocument()
   })
 
   it('steps forward and wraps past the last photo back to the first', async () => {
