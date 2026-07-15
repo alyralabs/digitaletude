@@ -6,16 +6,11 @@ import BlogPost, { loader } from './BlogPost'
 import RouteError from '../components/RouteError'
 import type { Post } from '../lib/types'
 
-vi.mock('../lib/api', async () => {
-  const actual =
-    await vi.importActual<typeof import('../lib/api')>('../lib/api')
-  return {
-    ...actual,
-    apiFetch: vi.fn(),
-  }
-})
+vi.mock('../lib/api', () => ({
+  fetchPostBySlug: vi.fn(),
+}))
 
-import { apiFetch, ApiError } from '../lib/api'
+import { fetchPostBySlug } from '../lib/api'
 
 function renderBlogPost(slug: string) {
   const router = createMemoryRouter(
@@ -50,26 +45,28 @@ const post: Post = {
 }
 
 describe('BlogPost', () => {
-  it('fetches /api/posts/:slug and renders the title and body', async () => {
-    vi.mocked(apiFetch).mockResolvedValue(post)
+  it('fetches the post by slug and renders the title and body', async () => {
+    vi.mocked(fetchPostBySlug).mockResolvedValue(post)
 
     renderBlogPost('a-great-post')
 
     expect(await screen.findByText('A Great Post')).toBeInTheDocument()
     expect(screen.getByText('Body text.')).toBeInTheDocument()
-    expect(apiFetch).toHaveBeenCalledWith('/api/posts/a-great-post')
+    expect(fetchPostBySlug).toHaveBeenCalledWith('a-great-post')
   })
 
-  it('translates a 404 ApiError into a thrown Response so the not-found error boundary renders', async () => {
-    vi.mocked(apiFetch).mockRejectedValue(new ApiError(404, 'post not found'))
+  it('translates a missing post into a thrown Response so the not-found error boundary renders', async () => {
+    vi.mocked(fetchPostBySlug).mockResolvedValue(null)
 
     renderBlogPost('unknown-slug')
 
     expect(await screen.findByText('Not found')).toBeInTheDocument()
   })
 
-  it('lets a non-404 error propagate to the generic error boundary', async () => {
-    vi.mocked(apiFetch).mockRejectedValue(new ApiError(500, 'internal error'))
+  it('lets a fetch error propagate to the generic error boundary', async () => {
+    vi.mocked(fetchPostBySlug).mockRejectedValue(
+      new Error('content request failed: 500'),
+    )
 
     renderBlogPost('a-great-post')
 

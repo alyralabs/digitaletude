@@ -5,10 +5,10 @@ import Photography, { loader } from './Photography'
 import type { Photo } from '../lib/types'
 
 vi.mock('../lib/api', () => ({
-  apiFetch: vi.fn(),
+  fetchPhotos: vi.fn(),
 }))
 
-import { apiFetch } from '../lib/api'
+import { fetchPhotos } from '../lib/api'
 
 function renderPhotography() {
   const router = createMemoryRouter([
@@ -31,7 +31,7 @@ const photo: Photo = {
 
 describe('Photography', () => {
   it('fetches /api/photos and renders each thumbnail with width/height and a link to the original', async () => {
-    vi.mocked(apiFetch).mockResolvedValue([photo])
+    vi.mocked(fetchPhotos).mockResolvedValue([photo])
 
     renderPhotography()
 
@@ -43,11 +43,11 @@ describe('Photography', () => {
     const link = img.closest('a')
     expect(link).toHaveAttribute('href', 'https://example.com/original.jpg')
 
-    expect(apiFetch).toHaveBeenCalledWith('/api/photos')
+    expect(fetchPhotos).toHaveBeenCalled()
   })
 
   it('renders the empty state when there are no photos', async () => {
-    vi.mocked(apiFetch).mockResolvedValue([])
+    vi.mocked(fetchPhotos).mockResolvedValue([])
 
     renderPhotography()
 
@@ -55,7 +55,7 @@ describe('Photography', () => {
   })
 
   it('shows no exif overlay for a photo with no exif data', async () => {
-    vi.mocked(apiFetch).mockResolvedValue([photo])
+    vi.mocked(fetchPhotos).mockResolvedValue([photo])
 
     renderPhotography()
 
@@ -65,7 +65,7 @@ describe('Photography', () => {
   })
 
   it('renders an exif overlay with every extracted field', async () => {
-    vi.mocked(apiFetch).mockResolvedValue([
+    vi.mocked(fetchPhotos).mockResolvedValue([
       {
         ...photo,
         exif: {
@@ -89,7 +89,7 @@ describe('Photography', () => {
   })
 
   it('omits missing fields instead of rendering them blank', async () => {
-    vi.mocked(apiFetch).mockResolvedValue([
+    vi.mocked(fetchPhotos).mockResolvedValue([
       { ...photo, exif: { aperture: 'f/4' } } satisfies Photo,
     ])
 

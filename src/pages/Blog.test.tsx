@@ -6,10 +6,10 @@ import Blog, { loader } from './Blog'
 import type { PostSummary } from '../lib/types'
 
 vi.mock('../lib/api', () => ({
-  apiFetch: vi.fn(),
+  fetchPosts: vi.fn(),
 }))
 
-import { apiFetch } from '../lib/api'
+import { fetchPosts } from '../lib/api'
 
 function renderBlog() {
   const router = createMemoryRouter([{ path: '/', Component: Blog, loader }])
@@ -30,7 +30,7 @@ const post: PostSummary = {
 
 describe('Blog', () => {
   it('fetches /api/posts and links each card to /blog/:slug', async () => {
-    vi.mocked(apiFetch).mockResolvedValue([post])
+    vi.mocked(fetchPosts).mockResolvedValue([post])
 
     renderBlog()
 
@@ -39,11 +39,11 @@ describe('Blog', () => {
     const link = title.closest('a')
     expect(link).toHaveAttribute('href', '/blog/a-great-post')
 
-    expect(apiFetch).toHaveBeenCalledWith('/api/posts')
+    expect(fetchPosts).toHaveBeenCalled()
   })
 
   it('renders the empty state when there are no posts', async () => {
-    vi.mocked(apiFetch).mockResolvedValue([])
+    vi.mocked(fetchPosts).mockResolvedValue([])
 
     renderBlog()
 

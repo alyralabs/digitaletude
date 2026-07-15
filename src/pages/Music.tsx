@@ -4,11 +4,11 @@ import { Pause } from '@primeicons/react/pause'
 import { Play } from '@primeicons/react/play'
 import { Button } from '@/components/ui/button'
 import PageSection from '../components/PageSection'
-import { apiFetch } from '../lib/api'
+import { fetchMusic } from '../lib/api'
 import type { MusicMetadata, MusicPayload, Track } from '../lib/types'
 
 export async function loader() {
-  return apiFetch<MusicPayload>('/api/music')
+  return fetchMusic()
 }
 
 function formatDuration(seconds: number | null) {

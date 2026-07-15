@@ -1,10 +1,10 @@
 import { useLoaderData } from 'react-router'
 import PageSection from '../components/PageSection'
-import { apiFetch } from '../lib/api'
+import { fetchPhotos } from '../lib/api'
 import type { Photo, PhotoExif } from '../lib/types'
 
 export async function loader() {
-  return apiFetch<Photo[]>('/api/photos')
+  return fetchPhotos()
 }
 
 // Viewfinder-style readout: solid black, white monospace text, deliberately

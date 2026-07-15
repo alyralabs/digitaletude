@@ -1,17 +1,12 @@
 import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
 import PostBody from '../components/PostBody'
-import { apiFetch, ApiError } from '../lib/api'
+import { fetchPostBySlug } from '../lib/api'
 import type { Post } from '../lib/types'
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  try {
-    return await apiFetch<Post>(`/api/posts/${params.slug}`)
-  } catch (err) {
-    if (err instanceof ApiError && err.status === 404) {
-      throw new Response('Not Found', { status: 404 })
-    }
-    throw err
-  }
+  const post = await fetchPostBySlug(params.slug!)
+  if (!post) throw new Response('Not Found', { status: 404 })
+  return post
 }
 
 export default function BlogPost() {

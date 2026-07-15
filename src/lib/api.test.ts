@@ -1,55 +1,201 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { apiFetch } from './api'
+import { fetchMusic, fetchPhotos, fetchPostBySlug, fetchPosts } from './api'
 
-describe('apiFetch', () => {
-  let fetchMock: ReturnType<typeof vi.fn>
+const SUPABASE = 'https://testref.supabase.co'
 
-  beforeEach(() => {
-    fetchMock = vi.fn()
-    vi.stubGlobal('fetch', fetchMock)
-  })
-  afterEach(() => {
-    vi.unstubAllGlobals()
-    vi.clearAllMocks()
-  })
+function jsonResponse(body: unknown) {
+  return new Response(JSON.stringify(body), { status: 200 })
+}
 
-  it('returns parsed JSON on a 200 response', async () => {
+let fetchMock: ReturnType<typeof vi.fn>
+
+beforeEach(() => {
+  vi.stubEnv('VITE_SUPABASE_URL', SUPABASE)
+  vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon-key')
+  fetchMock = vi.fn()
+  vi.stubGlobal('fetch', fetchMock)
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
+  vi.clearAllMocks()
+})
+
+describe('fetchPhotos', () => {
+  it('queries PostgREST with the anon key and composes storage URLs', async () => {
     fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ hello: 'world' }), { status: 200 }),
+      jsonResponse([
+        {
+          id: '1',
+          title: 'A Photo',
+          description: '',
+          width: 100,
+          height: 80,
+          sortOrder: 0,
+          createdAt: '2026-01-01T00:00:00Z',
+          exif: { iso: 'ISO 400' },
+          storagePath: 'originals/abc.jpg',
+          thumbnailPath: 'thumbnails/abc.jpg',
+        },
+      ]),
     )
-    const result = await apiFetch<{ hello: string }>('/api/x')
-    expect(result).toEqual({ hello: 'world' })
+
+    const photos = await fetchPhotos()
+
+    const [url, init] = fetchMock.mock.calls[0]
+    expect(url).toContain(`${SUPABASE}/rest/v1/photos?select=`)
+    expect(url).toContain('order=sort_order.asc,created_at.desc')
+    const headers = new Headers(init.headers)
+    expect(headers.get('apikey')).toBe('anon-key')
+    expect(headers.get('Authorization')).toBe('Bearer anon-key')
+
+    expect(photos).toHaveLength(1)
+    expect(photos[0].originalUrl).toBe(
+      `${SUPABASE}/storage/v1/object/public/photography/originals/abc.jpg`,
+    )
+    expect(photos[0].thumbnailUrl).toBe(
+      `${SUPABASE}/storage/v1/object/public/photography/thumbnails/abc.jpg`,
+    )
+    expect(photos[0].exif).toEqual({ iso: 'ISO 400' })
   })
 
-  it('returns undefined on a 204 response', async () => {
-    fetchMock.mockResolvedValue(new Response(null, { status: 204 }))
-    const result = await apiFetch('/api/x', { method: 'DELETE' })
-    expect(result).toBeUndefined()
+  it('throws on a non-OK response', async () => {
+    fetchMock.mockResolvedValue(new Response('nope', { status: 500 }))
+    await expect(fetchPhotos()).rejects.toThrow('content request failed: 500')
   })
+})
 
-  it('throws ApiError with the server message on a non-OK JSON response', async () => {
-    fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ error: { message: 'not found' } }), {
-        status: 404,
-        statusText: 'Not Found',
-      }),
-    )
-    await expect(apiFetch('/api/x')).rejects.toMatchObject({
-      status: 404,
-      message: 'not found',
+describe('fetchMusic', () => {
+  it('returns albums with embedded tracks plus singles, composing URLs', async () => {
+    const trackRow = {
+      id: 't1',
+      title: 'A Track',
+      description: '',
+      durationSeconds: 90,
+      albumId: 'a1',
+      trackNumber: 1,
+      sortOrder: 0,
+      createdAt: '2026-01-01T00:00:00Z',
+      metadata: null,
+      storagePath: 'tracks/t1.mp3',
+      coverImagePath: null,
+    }
+    fetchMock.mockImplementation((url: string) => {
+      if (url.includes('/rest/v1/albums')) {
+        return Promise.resolve(
+          jsonResponse([
+            {
+              id: 'a1',
+              title: 'An Album',
+              description: '',
+              sortOrder: 0,
+              createdAt: '2026-01-01T00:00:00Z',
+              metadata: null,
+              coverImagePath: 'covers/a1.jpg',
+              tracks: [trackRow],
+            },
+          ]),
+        )
+      }
+      return Promise.resolve(
+        jsonResponse([
+          { ...trackRow, id: 't2', albumId: null, trackNumber: null },
+        ]),
+      )
     })
+
+    const music = await fetchMusic()
+
+    const singlesUrl = fetchMock.mock.calls
+      .map((call) => String(call[0]))
+      .find((u) => u.includes('/rest/v1/tracks'))
+    expect(singlesUrl).toContain('album_id=is.null')
+
+    expect(music.albums).toHaveLength(1)
+    expect(music.albums[0].coverUrl).toBe(
+      `${SUPABASE}/storage/v1/object/public/music/covers/a1.jpg`,
+    )
+    expect(music.albums[0].metadata).toEqual({})
+    expect(music.albums[0].tracks[0].audioUrl).toBe(
+      `${SUPABASE}/storage/v1/object/public/music/tracks/t1.mp3`,
+    )
+    expect(music.albums[0].tracks[0].coverUrl).toBeNull()
+    expect(music.singles).toHaveLength(1)
+    expect(music.singles[0].id).toBe('t2')
+  })
+})
+
+describe('fetchPosts', () => {
+  it('filters to published, derives missing excerpts, and drops the body', async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse([
+        {
+          title: 'Has Excerpt',
+          slug: 'has-excerpt',
+          excerpt: 'hand-written',
+          coverImagePath: 'covers/p1.jpg',
+          publishedAt: '2026-01-01T00:00:00Z',
+          contentMarkdown: '# Heading\n\nBody.',
+        },
+        {
+          title: 'No Excerpt',
+          slug: 'no-excerpt',
+          excerpt: '',
+          coverImagePath: null,
+          publishedAt: '2026-01-02T00:00:00Z',
+          contentMarkdown: '# Heading\n\nDerived from the body text.',
+        },
+      ]),
+    )
+
+    const posts = await fetchPosts()
+
+    const [url] = fetchMock.mock.calls[0]
+    expect(url).toContain('status=eq.published')
+    expect(url).toContain('order=published_at.desc')
+
+    expect(posts[0].excerpt).toBe('hand-written')
+    expect(posts[0].coverUrl).toBe(
+      `${SUPABASE}/storage/v1/object/public/blog/covers/p1.jpg`,
+    )
+    // Heading markers are stripped but their text is kept, per deriveExcerpt.
+    expect(posts[1].excerpt).toBe('Heading Derived from the body text.')
+    expect(posts[1].coverUrl).toBeNull()
+    expect(posts[1]).not.toHaveProperty('contentMarkdown')
+  })
+})
+
+describe('fetchPostBySlug', () => {
+  it('returns the mapped post when found', async () => {
+    fetchMock.mockResolvedValue(
+      jsonResponse([
+        {
+          id: '1',
+          slug: 'a-post',
+          title: 'A Post',
+          excerpt: '',
+          contentMarkdown: 'Body.',
+          status: 'published',
+          createdAt: '2026-01-01T00:00:00Z',
+          updatedAt: '2026-01-01T00:00:00Z',
+          publishedAt: '2026-01-01T00:00:00Z',
+          coverImagePath: null,
+        },
+      ]),
+    )
+
+    const post = await fetchPostBySlug('a-post')
+
+    const [url] = fetchMock.mock.calls[0]
+    expect(url).toContain('slug=eq.a-post')
+    expect(url).toContain('status=eq.published')
+    expect(post?.title).toBe('A Post')
+    expect(post?.coverUrl).toBeNull()
   })
 
-  it('falls back to statusText on a non-OK non-JSON response', async () => {
-    fetchMock.mockResolvedValue(
-      new Response('plain text body', {
-        status: 500,
-        statusText: 'Server Error',
-      }),
-    )
-    await expect(apiFetch('/api/x')).rejects.toMatchObject({
-      status: 500,
-      message: 'Server Error',
-    })
+  it('returns null when no row matches (draft or unknown slug)', async () => {
+    fetchMock.mockResolvedValue(jsonResponse([]))
+    expect(await fetchPostBySlug('unknown')).toBeNull()
   })
 })

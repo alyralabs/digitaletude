@@ -7,7 +7,7 @@ import Music, { loader } from './Music'
 import type { MusicPayload, Track } from '../lib/types'
 
 vi.mock('../lib/api', () => ({
-  apiFetch: vi.fn(),
+  fetchMusic: vi.fn(),
 }))
 
 // @primeicons/react@8.0.0-alpha.1's package exports map is broken (see the
@@ -21,7 +21,7 @@ vi.mock('@primeicons/react/pause', () => ({
   Pause: () => <span>pause-icon</span>,
 }))
 
-import { apiFetch } from '../lib/api'
+import { fetchMusic } from '../lib/api'
 
 function renderMusic() {
   const router = createMemoryRouter([{ path: '/', Component: Music, loader }])
@@ -51,7 +51,7 @@ function track(overrides: Partial<Track> = {}): Track {
 
 describe('Music', () => {
   it('fetches /api/music and renders the empty state when there is nothing', async () => {
-    vi.mocked(apiFetch).mockResolvedValue({
+    vi.mocked(fetchMusic).mockResolvedValue({
       albums: [],
       singles: [],
     } satisfies MusicPayload)
@@ -59,11 +59,11 @@ describe('Music', () => {
     renderMusic()
 
     expect(await screen.findByText('No music yet.')).toBeInTheDocument()
-    expect(apiFetch).toHaveBeenCalledWith('/api/music')
+    expect(fetchMusic).toHaveBeenCalled()
   })
 
   it('renders album tracks under their album and singles separately', async () => {
-    vi.mocked(apiFetch).mockResolvedValue({
+    vi.mocked(fetchMusic).mockResolvedValue({
       albums: [
         {
           id: 'a1',
@@ -89,7 +89,7 @@ describe('Music', () => {
   })
 
   it('clicking play sets the shared audio element source and toggles to pause', async () => {
-    vi.mocked(apiFetch).mockResolvedValue({
+    vi.mocked(fetchMusic).mockResolvedValue({
       albums: [],
       singles: [track({ title: 'Playable Track' })],
     } satisfies MusicPayload)
@@ -118,7 +118,7 @@ describe('Music', () => {
   })
 
   it('renders external metadata links', async () => {
-    vi.mocked(apiFetch).mockResolvedValue({
+    vi.mocked(fetchMusic).mockResolvedValue({
       albums: [],
       singles: [
         track({
