@@ -4,8 +4,11 @@ import { Times } from '@primeicons/react/times'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { usePlayer } from '../context/player'
-import { formatDuration } from '../lib/duration'
 
+// Lives in the footer's left slot (see Footer.tsx), not as its own fixed
+// bar — kept intentionally compact (no elapsed/total labels, slider hidden
+// below `sm:`) since it now shares a single footer row instead of owning
+// the full width of the screen.
 export default function NowPlayingBar() {
   const {
     currentTrack: track,
@@ -25,53 +28,43 @@ export default function NowPlayingBar() {
     <div
       role="region"
       aria-label="Now playing"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-surface bg-page/95 backdrop-blur-sm"
+      className="flex min-w-0 items-center gap-2"
     >
-      <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-3 xl:max-w-7xl xl:px-8 2xl:max-w-[1800px] 2xl:px-12">
-        <Button
-          rounded
-          iconOnly
-          size="small"
-          aria-label={
-            isPlaying ? `Pause ${track.title}` : `Play ${track.title}`
-          }
-          onClick={() => toggle(track)}
-        >
-          {isPlaying ? <Pause /> : <Play />}
-        </Button>
-        <p className="w-32 shrink-0 truncate text-sm font-medium text-color sm:w-56">
-          {track.title || 'Untitled'}
-        </p>
-        <span className="w-10 shrink-0 text-right text-xs text-muted-color">
-          {formatDuration(Math.floor(currentTime)) ?? '0:00'}
-        </span>
-        <Slider
-          value={currentTime}
-          min={0}
-          max={total}
-          onValueChange={(e) => {
-            if (typeof e.value === 'number') seekChange(e.value)
-          }}
-          onValueChangeEnd={(e) => {
-            if (typeof e.value === 'number') seekCommit(e.value)
-          }}
-          className="flex-1"
-        />
-        <span className="w-10 shrink-0 text-xs text-muted-color">
-          {formatDuration(total ? Math.floor(total) : null) ?? '0:00'}
-        </span>
-        <Button
-          rounded
-          iconOnly
-          size="small"
-          variant="text"
-          severity="secondary"
-          aria-label="Close player"
-          onClick={stop}
-        >
-          <Times />
-        </Button>
-      </div>
+      <Button
+        rounded
+        iconOnly
+        size="small"
+        aria-label={isPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
+        onClick={() => toggle(track)}
+      >
+        {isPlaying ? <Pause /> : <Play />}
+      </Button>
+      <p className="max-w-16 shrink truncate text-xs font-medium text-color sm:max-w-28">
+        {track.title || 'Untitled'}
+      </p>
+      <Slider
+        value={currentTime}
+        min={0}
+        max={total}
+        onValueChange={(e) => {
+          if (typeof e.value === 'number') seekChange(e.value)
+        }}
+        onValueChangeEnd={(e) => {
+          if (typeof e.value === 'number') seekCommit(e.value)
+        }}
+        className="hidden w-16 shrink-0 sm:block md:w-24"
+      />
+      <Button
+        rounded
+        iconOnly
+        size="small"
+        variant="text"
+        severity="secondary"
+        aria-label="Close player"
+        onClick={stop}
+      >
+        <Times />
+      </Button>
     </div>
   )
 }
