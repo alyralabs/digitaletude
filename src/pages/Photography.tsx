@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useLoaderData } from 'react-router'
-import ExifOverlay from '../components/ExifOverlay'
 import PhotoCarousel from '../components/PhotoCarousel'
 import { fetchPhotos } from '../lib/api'
 import type { Photo } from '../lib/types'
