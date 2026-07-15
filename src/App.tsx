@@ -1,10 +1,12 @@
 import { createBrowserRouter, redirect, RouterProvider } from 'react-router'
 import Layout from './components/Layout'
 import RouteError from './components/RouteError'
-import Blog, { loader as blogLoader } from './pages/Blog'
-import BlogPost, { loader as blogPostLoader } from './pages/BlogPost'
-import Music, { loader as musicLoader } from './pages/Music'
-import Photography, { loader as photographyLoader } from './pages/Photography'
+import {
+  blogLoader,
+  blogPostLoader,
+  musicLoader,
+  photographyLoader,
+} from './lib/loaders'
 
 const router = createBrowserRouter([
   {
@@ -17,26 +19,34 @@ const router = createBrowserRouter([
       { index: true, loader: () => redirect('/blog') },
       {
         path: 'photography',
-        element: <Photography />,
         loader: photographyLoader,
+        lazy: {
+          Component: () => import('./pages/Photography').then((m) => m.default),
+        },
         errorElement: <RouteError />,
       },
       {
         path: 'music',
-        element: <Music />,
         loader: musicLoader,
+        lazy: {
+          Component: () => import('./pages/Music').then((m) => m.default),
+        },
         errorElement: <RouteError />,
       },
       {
         path: 'blog',
-        element: <Blog />,
         loader: blogLoader,
+        lazy: {
+          Component: () => import('./pages/Blog').then((m) => m.default),
+        },
         errorElement: <RouteError />,
       },
       {
         path: 'blog/:slug',
-        element: <BlogPost />,
         loader: blogPostLoader,
+        lazy: {
+          Component: () => import('./pages/BlogPost').then((m) => m.default),
+        },
         errorElement: <RouteError />,
       },
     ],

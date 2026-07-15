@@ -1,27 +1,24 @@
 import { Pause } from '@primeicons/react/pause'
 import { Play } from '@primeicons/react/play'
+import { Times } from '@primeicons/react/times'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
+import { usePlayer } from '../context/player'
 import { formatDuration } from '../lib/duration'
-import type { Track } from '../lib/types'
 
-export default function NowPlayingBar({
-  track,
-  isPlaying,
-  currentTime,
-  duration,
-  onToggle,
-  onSeekChange,
-  onSeekCommit,
-}: {
-  track: Track
-  isPlaying: boolean
-  currentTime: number
-  duration: number | null
-  onToggle: () => void
-  onSeekChange: (value: number) => void
-  onSeekCommit: (value: number) => void
-}) {
+export default function NowPlayingBar() {
+  const {
+    currentTrack: track,
+    isPlaying,
+    currentTime,
+    duration,
+    toggle,
+    stop,
+    seekChange,
+    seekCommit,
+  } = usePlayer()
+
+  if (!track) return null
   const total = duration ?? track.durationSeconds ?? 0
 
   return (
@@ -38,7 +35,7 @@ export default function NowPlayingBar({
           aria-label={
             isPlaying ? `Pause ${track.title}` : `Play ${track.title}`
           }
-          onClick={onToggle}
+          onClick={() => toggle(track)}
         >
           {isPlaying ? <Pause /> : <Play />}
         </Button>
@@ -53,16 +50,27 @@ export default function NowPlayingBar({
           min={0}
           max={total}
           onValueChange={(e) => {
-            if (typeof e.value === 'number') onSeekChange(e.value)
+            if (typeof e.value === 'number') seekChange(e.value)
           }}
           onValueChangeEnd={(e) => {
-            if (typeof e.value === 'number') onSeekCommit(e.value)
+            if (typeof e.value === 'number') seekCommit(e.value)
           }}
           className="flex-1"
         />
         <span className="w-10 shrink-0 text-xs text-muted-color">
           {formatDuration(total ? Math.floor(total) : null) ?? '0:00'}
         </span>
+        <Button
+          rounded
+          iconOnly
+          size="small"
+          variant="text"
+          severity="secondary"
+          aria-label="Close player"
+          onClick={stop}
+        >
+          <Times />
+        </Button>
       </div>
     </div>
   )

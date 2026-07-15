@@ -42,8 +42,8 @@ export default function PhotoCarousel({
     >
       <DialogPortal>
         <DialogBackdrop />
-        <DialogPositioner>
-          <DialogPopup className="max-h-[90vh] max-w-[90vw]">
+        <DialogPositioner className="p-4">
+          <DialogPopup className="max-h-[95vh] max-w-[95vw]">
             <DialogHeader>
               <DialogTitle className="truncate">{photo.title}</DialogTitle>
               <DialogHeaderActions>
@@ -57,7 +57,7 @@ export default function PhotoCarousel({
                 <img
                   src={photo.thumbnailUrl}
                   alt={photo.title}
-                  className="max-h-[70vh] max-w-full rounded-lg object-contain"
+                  className="max-h-[80vh] max-w-full rounded-lg object-contain"
                 />
                 <ExifOverlay exif={photo.exif} />
               </div>

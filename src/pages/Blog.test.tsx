@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { PrimeReactProvider } from '@primereact/core'
-import Blog, { loader } from './Blog'
+import Blog from './Blog'
+import { blogLoader as loader } from '../lib/loaders'
+import RouteError from '../components/RouteError'
 import type { PostSummary } from '../lib/types'
 
 vi.mock('../lib/api', () => ({
@@ -12,7 +14,9 @@ vi.mock('../lib/api', () => ({
 import { fetchPosts } from '../lib/api'
 
 function renderBlog() {
-  const router = createMemoryRouter([{ path: '/', Component: Blog, loader }])
+  const router = createMemoryRouter([
+    { path: '/', Component: Blog, loader, errorElement: <RouteError /> },
+  ])
   return render(
     <PrimeReactProvider>
       <RouterProvider router={router} />
@@ -38,8 +42,16 @@ describe('Blog', () => {
     expect(screen.getByText('An excerpt of the post.')).toBeInTheDocument()
     const link = title.closest('a')
     expect(link).toHaveAttribute('href', '/blog/a-great-post')
+  })
 
-    expect(fetchPosts).toHaveBeenCalled()
+  it('lets a fetch error propagate to the generic error boundary', async () => {
+    vi.mocked(fetchPosts).mockRejectedValue(
+      new Error('content request failed: 500'),
+    )
+
+    renderBlog()
+
+    expect(await screen.findByText('Something went wrong')).toBeInTheDocument()
   })
 
   it('renders the empty state when there are no posts', async () => {

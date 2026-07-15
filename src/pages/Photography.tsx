@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLoaderData } from 'react-router'
 import PhotoCarousel from '../components/PhotoCarousel'
-import { fetchPhotos } from '../lib/api'
 import type { Photo } from '../lib/types'
-
-export async function loader() {
-  return fetchPhotos()
-}
 
 export default function Photography() {
   const photos = useLoaderData<Photo[]>()
@@ -50,7 +45,7 @@ export default function Photography() {
                 key={photo.id}
                 type="button"
                 onClick={() => setOpenIndex(i)}
-                className="relative mb-4 block w-full break-inside-avoid text-left"
+                className="relative mb-4 block w-full cursor-pointer break-inside-avoid text-left"
               >
                 <img
                   src={photo.thumbnailUrl}

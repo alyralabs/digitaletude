@@ -3,7 +3,8 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { PrimeReactProvider } from '@primereact/core'
-import Photography, { loader } from './Photography'
+import Photography from './Photography'
+import { photographyLoader as loader } from '../lib/loaders'
 import type { Photo } from '../lib/types'
 
 vi.mock('../lib/api', () => ({

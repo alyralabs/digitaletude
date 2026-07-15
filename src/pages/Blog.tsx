@@ -1,12 +1,7 @@
 import { Link, useLoaderData } from 'react-router'
 import { Card, CardBody, CardCaption, CardTitle } from '@/components/ui/card'
 import PageSection from '../components/PageSection'
-import { fetchPosts } from '../lib/api'
 import type { PostSummary } from '../lib/types'
-
-export async function loader() {
-  return fetchPosts()
-}
 
 export default function Blog() {
   const posts = useLoaderData<PostSummary[]>()
