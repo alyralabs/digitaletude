@@ -33,3 +33,7 @@ dist-ssr
 
 # Personal Claude Code settings
 .claude/settings.local.json
+
+# Local-only working notes, not for the public repo
+CONTEXT.md
+plans/

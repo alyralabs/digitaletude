@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router'
+import { useState } from 'react'
+import { NavLink } from 'react-router'
 import { Bars } from '@primeicons/react/bars'
 import { Moon } from '@primeicons/react/moon'
 import { Sun } from '@primeicons/react/sun'
 import { Times } from '@primeicons/react/times'
-import { Button } from '@/components/ui/button'
 import {
   Drawer,
   DrawerBackdrop,
@@ -34,48 +33,6 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'text-primary' : 'text-muted-color hover:text-color',
   ].join(' ')
 
-// Whether there's a live admin session, so the public site can offer a
-// quick way back into /admin instead of typing the URL.
-//
-// supabase-js is ~400KB and this hook runs on every public page, so it's
-// deliberately kept out of the static import graph: a cheap localStorage
-// probe (supabase persists sessions under sb-*-auth-token) decides whether
-// to dynamically import it at all. Anonymous visitors — the vast majority —
-// never download the supabase chunk. The catch also preserves the existing
-// invariant that missing Supabase env vars only break admin routes, never
-// the public site.
-function useAdminSignedIn() {
-  const [signedIn, setSignedIn] = useState(false)
-
-  useEffect(() => {
-    const hasStoredSession = Object.keys(localStorage).some(
-      (key) => key.startsWith('sb-') && key.endsWith('-auth-token'),
-    )
-    if (!hasStoredSession) return
-
-    let cancelled = false
-    let unsubscribe = () => {}
-    import('../lib/supabase')
-      .then(({ supabaseClient }) => {
-        const client = supabaseClient()
-        client.auth.getSession().then(({ data }) => {
-          if (!cancelled) setSignedIn(!!data.session)
-        })
-        const { data } = client.auth.onAuthStateChange((_event, session) => {
-          setSignedIn(!!session)
-        })
-        unsubscribe = () => data.subscription.unsubscribe()
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
-      unsubscribe()
-    }
-  }, [])
-
-  return signedIn
-}
-
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
   return (
@@ -91,25 +48,8 @@ function ThemeToggle() {
   )
 }
 
-function AdminLink({ onClick }: { onClick?: () => void }) {
-  const navigate = useNavigate()
-  return (
-    <Button
-      size="small"
-      variant="outlined"
-      onClick={() => {
-        onClick?.()
-        navigate('/admin')
-      }}
-    >
-      Admin
-    </Button>
-  )
-}
-
 export default function NavBar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const adminSignedIn = useAdminSignedIn()
 
   return (
     <header className="sticky top-0 z-50 border-b border-surface bg-page/85 backdrop-blur-sm">
@@ -129,7 +69,6 @@ export default function NavBar() {
         </ul>
 
         <div className="hidden items-center gap-4 md:flex">
-          {adminSignedIn && <AdminLink />}
           <ThemeToggle />
         </div>
 
@@ -168,11 +107,6 @@ export default function NavBar() {
                     </li>
                   ))}
                 </ul>
-                {adminSignedIn && (
-                  <div className="mt-4">
-                    <AdminLink onClick={() => setDrawerOpen(false)} />
-                  </div>
-                )}
                 <div className="mt-6 border-t border-surface pt-6">
                   <ThemeToggle />
                 </div>

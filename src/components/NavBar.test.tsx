@@ -17,18 +17,6 @@ vi.mock('@primeicons/react/moon', () => ({
 }))
 vi.mock('@primeicons/react/sun', () => ({ Sun: () => <span>sun-icon</span> }))
 
-const mockGetSession = vi.fn()
-const mockOnAuthStateChange = vi.fn()
-
-vi.mock('../lib/supabase', () => ({
-  supabaseClient: () => ({
-    auth: {
-      getSession: mockGetSession,
-      onAuthStateChange: mockOnAuthStateChange,
-    },
-  }),
-}))
-
 // jsdom has no matchMedia; ThemeProvider (wrapped below) needs it to pick an
 // initial theme. Not testing theme-detection behavior here (ThemeContext.test.tsx
 // already does) — just need it to not throw, so the light branch is enough.
@@ -45,10 +33,7 @@ function stubMatchMedia() {
 }
 
 function renderNavBar() {
-  const router = createMemoryRouter([
-    { path: '/', Component: NavBar },
-    { path: '/admin', Component: () => <div>Admin Page</div> },
-  ])
+  const router = createMemoryRouter([{ path: '/', Component: NavBar }])
   return render(
     <PrimeReactProvider>
       <ThemeProvider>
@@ -59,13 +44,8 @@ function renderNavBar() {
 }
 
 beforeEach(() => {
-  localStorage.clear()
   document.documentElement.classList.remove('dark')
   stubMatchMedia()
-  mockGetSession.mockResolvedValue({ data: { session: null } })
-  mockOnAuthStateChange.mockReturnValue({
-    data: { subscription: { unsubscribe: vi.fn() } },
-  })
 })
 
 describe('NavBar drawer', () => {
@@ -120,43 +100,5 @@ describe('theme toggle', () => {
     await user.click(screen.getByRole('switch'))
 
     expect(document.documentElement.classList.contains('dark')).toBe(true)
-  })
-})
-
-describe('admin quick-link', () => {
-  it('never even probes Supabase when no stored session key exists', async () => {
-    renderNavBar()
-
-    // The localStorage pre-check short-circuits before the (lazily
-    // imported) client is touched — anonymous visitors must not pay for
-    // the supabase chunk at all.
-    expect(
-      screen.queryByRole('button', { name: 'Admin' }),
-    ).not.toBeInTheDocument()
-    expect(mockGetSession).not.toHaveBeenCalled()
-  })
-
-  it('is not shown when a stored key exists but the session is gone', async () => {
-    localStorage.setItem('sb-testref-auth-token', '{}')
-    renderNavBar()
-
-    await waitFor(() => expect(mockGetSession).toHaveBeenCalled())
-    expect(
-      screen.queryByRole('button', { name: 'Admin' }),
-    ).not.toBeInTheDocument()
-  })
-
-  it('appears once a session is found, and navigates to /admin when clicked', async () => {
-    localStorage.setItem('sb-testref-auth-token', '{}')
-    mockGetSession.mockResolvedValue({
-      data: { session: { access_token: 'fake' } },
-    })
-    const user = userEvent.setup()
-    renderNavBar()
-
-    const adminButton = await screen.findByRole('button', { name: 'Admin' })
-    await user.click(adminButton)
-
-    expect(await screen.findByText('Admin Page')).toBeInTheDocument()
   })
 })
