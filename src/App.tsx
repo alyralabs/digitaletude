@@ -1,10 +1,8 @@
-import { createBrowserRouter, RouterProvider } from 'react-router'
+import { createBrowserRouter, redirect, RouterProvider } from 'react-router'
 import Layout from './components/Layout'
 import RouteError from './components/RouteError'
-import About from './pages/About'
 import Blog, { loader as blogLoader } from './pages/Blog'
 import BlogPost, { loader as blogPostLoader } from './pages/BlogPost'
-import Home from './pages/Home'
 import Music, { loader as musicLoader } from './pages/Music'
 import Photography, { loader as photographyLoader } from './pages/Photography'
 
@@ -14,8 +12,9 @@ const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <RouteError />,
     children: [
-      { index: true, element: <Home /> },
-      { path: 'about', element: <About /> },
+      // Home/About were placeholders — removed until there's real content;
+      // the blog is the landing page for now.
+      { index: true, loader: () => redirect('/blog') },
       {
         path: 'photography',
         element: <Photography />,

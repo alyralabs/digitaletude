@@ -20,11 +20,9 @@ import Logo from './Logo'
 import { useTheme } from '../context/theme'
 
 const navItems = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/about', label: 'About' },
+  { to: '/blog', label: 'Blog' },
   { to: '/photography', label: 'Photography' },
   { to: '/music', label: 'Music' },
-  { to: '/blog', label: 'Blog' },
 ]
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -59,9 +57,9 @@ export default function NavBar() {
         </NavLink>
 
         <ul className="hidden items-center gap-5 md:flex">
-          {navItems.map(({ to, label, end }) => (
+          {navItems.map(({ to, label }) => (
             <li key={to}>
-              <NavLink to={to} end={end} className={linkClass}>
+              <NavLink to={to} className={linkClass}>
                 {label}
               </NavLink>
             </li>
@@ -94,11 +92,10 @@ export default function NavBar() {
               </DrawerHeader>
               <DrawerContent>
                 <ul className="space-y-4">
-                  {navItems.map(({ to, label, end }) => (
+                  {navItems.map(({ to, label }) => (
                     <li key={to}>
                       <NavLink
                         to={to}
-                        end={end}
                         className={linkClass}
                         onClick={() => setDrawerOpen(false)}
                       >
