@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useSyncExternalStore } from 'react'
 import { PlayerProvider } from './PlayerContext'
 import { usePlayer } from './player'
 import type { Track } from '../lib/types'
@@ -125,6 +126,38 @@ describe('PlayerContext', () => {
     expect(screen.getByText('current: none')).toBeInTheDocument()
     expect(screen.getByText('playing: false')).toBeInTheDocument()
     expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled()
+  })
+
+  it('timeupdate ticks reach time subscribers without re-rendering other consumers', () => {
+    HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+    HTMLMediaElement.prototype.pause = vi.fn()
+
+    let trackProbeRenders = 0
+    function TrackProbe() {
+      const { currentTrack } = usePlayer()
+      trackProbeRenders++
+      return <p>track: {currentTrack?.title ?? 'none'}</p>
+    }
+    function TimeProbe() {
+      const { subscribeTime, getTime } = usePlayer()
+      const time = useSyncExternalStore(subscribeTime, getTime)
+      return <p>time: {time}</p>
+    }
+
+    render(
+      <PlayerProvider>
+        <TrackProbe />
+        <TimeProbe />
+      </PlayerProvider>,
+    )
+    const audio = document.querySelector('audio')!
+    const rendersBeforeTick = trackProbeRenders
+
+    audio.currentTime = 42
+    fireEvent(audio, new Event('timeupdate'))
+
+    expect(screen.getByText('time: 42')).toBeInTheDocument()
+    expect(trackProbeRenders).toBe(rendersBeforeTick)
   })
 
   it('usePlayer throws outside a PlayerProvider', () => {

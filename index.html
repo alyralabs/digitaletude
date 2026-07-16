@@ -5,6 +5,28 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>digitaletude</title>
+    <!-- All content (PostgREST data, storage images/audio) comes from the
+         Supabase origin; warming the connection here overlaps DNS/TCP/TLS
+         with the JS download instead of paying it after. Two hints because
+         browsers key connections by CORS mode: the crossorigin one serves
+         fetch(), the bare one serves <img>/<audio>. Vite substitutes
+         %VITE_SUPABASE_URL% at build time (HTML env replacement). -->
+    <link rel="preconnect" href="%VITE_SUPABASE_URL%" />
+    <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
+    <!-- Pre-paint theme: ThemeProvider applies .dark in a useEffect, which
+         lands after first paint — without this, dark-theme users get a
+         light flash on every cold load. Must mirror getInitialTheme() in
+         src/context/ThemeContext.tsx. -->
+    <script>
+      const stored = localStorage.getItem('theme')
+      if (
+        stored === 'dark' ||
+        (stored !== 'light' &&
+          matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

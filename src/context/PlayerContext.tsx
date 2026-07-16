@@ -2,13 +2,45 @@ import { useRef, useState, type ReactNode } from 'react'
 import { PlayerContext } from './player'
 import type { Track } from '../lib/types'
 
+// Time lives outside React state (see player.ts): mutating this store and
+// notifying listeners re-renders only the subscribed time displays, not
+// every context consumer.
+type TimeStore = {
+  time: number
+  duration: number | null
+  scrubbing: boolean
+  listeners: Set<() => void>
+}
+
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null)
+  const storeRef = useRef<TimeStore>({
+    time: 0,
+    duration: null,
+    scrubbing: false,
+    listeners: new Set(),
+  })
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState<number | null>(null)
-  const [scrubbing, setScrubbing] = useState(false)
+
+  function emit() {
+    for (const listener of storeRef.current.listeners) listener()
+  }
+
+  function subscribeTime(listener: () => void) {
+    storeRef.current.listeners.add(listener)
+    return () => {
+      storeRef.current.listeners.delete(listener)
+    }
+  }
+
+  function getTime() {
+    return storeRef.current.time
+  }
+
+  function getDuration() {
+    return storeRef.current.duration
+  }
 
   function toggle(track: Track) {
     const audio = audioRef.current
@@ -24,8 +56,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     // resuming the exact same track that was just paused.
     if (audio.src !== track.audioUrl) {
       audio.src = track.audioUrl
-      setCurrentTime(0)
-      setDuration(null)
+      storeRef.current.time = 0
+      storeRef.current.duration = null
+      emit()
     }
     void audio.play()
     setCurrentTrack(track)
@@ -39,15 +72,17 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }
 
   function seekChange(value: number) {
-    setScrubbing(true)
-    setCurrentTime(value)
+    storeRef.current.scrubbing = true
+    storeRef.current.time = value
+    emit()
   }
 
   function seekCommit(value: number) {
     const audio = audioRef.current
     if (audio) audio.currentTime = value
-    setCurrentTime(value)
-    setScrubbing(false)
+    storeRef.current.scrubbing = false
+    storeRef.current.time = value
+    emit()
   }
 
   return (
@@ -55,12 +90,13 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       value={{
         currentTrack,
         isPlaying,
-        currentTime,
-        duration,
         toggle,
         stop,
         seekChange,
         seekCommit,
+        subscribeTime,
+        getTime,
+        getDuration,
       }}
     >
       {/* One shared player: swapping `src` here avoids multiple audio
@@ -70,14 +106,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         ref={audioRef}
         onEnded={() => setIsPlaying(false)}
         onTimeUpdate={() => {
-          // A drag in progress owns `currentTime` until release — otherwise
+          // A drag in progress owns the time until release — otherwise
           // the ~4x/second timeupdate tick yanks the slider thumb back to
           // the playback position mid-drag.
-          if (scrubbing) return
-          setCurrentTime(audioRef.current?.currentTime ?? 0)
+          if (storeRef.current.scrubbing) return
+          storeRef.current.time = audioRef.current?.currentTime ?? 0
+          emit()
         }}
         onLoadedMetadata={() => {
-          setDuration(audioRef.current?.duration ?? null)
+          storeRef.current.duration = audioRef.current?.duration ?? null
+          emit()
         }}
         className="hidden"
       />

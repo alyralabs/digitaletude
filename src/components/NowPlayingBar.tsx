@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from 'react'
 import { Pause } from '@primeicons/react/pause'
 import { Play } from '@primeicons/react/play'
 import { Times } from '@primeicons/react/times'
@@ -21,13 +22,18 @@ export default function NowPlayingBar() {
   const {
     currentTrack: track,
     isPlaying,
-    currentTime,
-    duration,
     toggle,
     stop,
     seekChange,
     seekCommit,
+    subscribeTime,
+    getTime,
+    getDuration,
   } = usePlayer()
+  // Time ticks arrive through the subscription store, so only this bar
+  // re-renders 4x/second during playback — not every usePlayer consumer.
+  const currentTime = useSyncExternalStore(subscribeTime, getTime)
+  const duration = useSyncExternalStore(subscribeTime, getDuration)
 
   if (!track) return null
   const total = duration ?? track.durationSeconds ?? 0

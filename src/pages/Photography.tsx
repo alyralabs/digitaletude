@@ -7,6 +7,17 @@ export default function Photography() {
   const photos = useLoaderData<Photo[]>()
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
+  // Warm the browser cache for the carousel's neighbors so prev/next is
+  // instant instead of waiting on the network mid-browse.
+  useEffect(() => {
+    if (openIndex === null || photos.length < 2) return
+    for (const offset of [1, -1]) {
+      const neighbor =
+        photos[(openIndex + offset + photos.length) % photos.length]
+      new Image().src = neighbor.thumbnailUrl
+    }
+  }, [openIndex, photos])
+
   useEffect(() => {
     if (openIndex === null || photos.length === 0) return
     function onKeyDown(e: KeyboardEvent) {
@@ -52,6 +63,12 @@ export default function Photography() {
                   alt={photo.title}
                   width={photo.width}
                   height={photo.height}
+                  // lazy defers offscreen thumbnails (in-viewport ones still
+                  // load immediately once layout is known); the first DOM
+                  // image tops the left column and is the likely LCP.
+                  fetchPriority={i === 0 ? 'high' : undefined}
+                  loading={i === 0 ? undefined : 'lazy'}
+                  decoding="async"
                   className="w-full rounded-lg border border-surface"
                 />
               </button>

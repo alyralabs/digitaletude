@@ -15,13 +15,18 @@ export default function Blog() {
           <p className="text-muted-color">No posts yet.</p>
         ) : (
           <div className="grid gap-6 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-            {posts.map((post) => (
+            {posts.map((post, i) => (
               <Link key={post.slug} to={`/blog/${post.slug}`}>
                 <Card className="overflow-hidden">
                   {post.coverUrl && (
                     <img
                       src={post.coverUrl}
                       alt={post.title}
+                      // First cover is the likely LCP — fetch it at full
+                      // priority; everything below the fold waits.
+                      fetchPriority={i === 0 ? 'high' : undefined}
+                      loading={i === 0 ? undefined : 'lazy'}
+                      decoding="async"
                       className="h-44 w-full object-cover"
                     />
                   )}

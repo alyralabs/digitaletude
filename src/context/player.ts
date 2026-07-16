@@ -4,12 +4,18 @@ import type { Track } from '../lib/types'
 export type PlayerContextValue = {
   currentTrack: Track | null
   isPlaying: boolean
-  currentTime: number
-  duration: number | null
   toggle: (track: Track) => void
   stop: () => void
   seekChange: (value: number) => void
   seekCommit: (value: number) => void
+  // Playback time ticks ~4x/second — exposing it as React state here would
+  // re-render every consumer (Footer, the whole Music track list) on each
+  // tick for the entire listening session. Instead it lives in a plain
+  // subscription store; only components that actually display time
+  // subscribe, via useSyncExternalStore.
+  subscribeTime: (listener: () => void) => () => void
+  getTime: () => number
+  getDuration: () => number | null
 }
 
 export const PlayerContext = createContext<PlayerContextValue | null>(null)
