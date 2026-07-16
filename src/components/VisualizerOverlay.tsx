@@ -78,7 +78,7 @@ const SIMPLEX_NOISE_GLSL = `
 `
 
 const PARTICLE_COUNT = 1400
-const BAND_HUE = [0.02, 0.33, 0.62] // bass: red-orange, mid: green-yellow, treble: blue-violet
+const BAND_HUE = [0.6, 0.72, 0.82] // bass: blue, mid: indigo, treble: violet-magenta
 const REDUCED_MOTION = window.matchMedia(
   '(prefers-reduced-motion: reduce)',
 ).matches
@@ -171,7 +171,7 @@ export default function VisualizerOverlay({
 
         void main() {
           float n = snoise(position * 1.8 + u_time * 0.25);
-          float distortion = 0.15 + u_level * 0.6;
+          float distortion = 0.15 + u_level * 1.4;
           float disp = n * distortion;
           vDisp = disp;
           vec3 newPos = position + normal * disp;
@@ -192,47 +192,6 @@ export default function VisualizerOverlay({
     })
     const outerGeometry = new THREE.IcosahedronGeometry(1, 4)
     group.add(new THREE.Mesh(outerGeometry, outerMaterial))
-
-    // Front-facing fresnel rim: at the silhouette, normal is perpendicular
-    // to viewDir so the dot product is ~0 -> fresnel ~1 (bright). At center
-    // they're near-parallel so dot ~1 -> fresnel ~0 (dark/clear). A BackSide
-    // version was tried and rejected: with the camera looking at the far
-    // inside surface, most visible points have a *negative* dot, and
-    // clamping that to 0 made the rim term 1 almost everywhere — a flat
-    // painted disc, not a rim.
-    const innerUniforms = { u_level: { value: 0 } }
-    const innerMaterial = new THREE.ShaderMaterial({
-      uniforms: innerUniforms,
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      vertexShader: `
-        varying vec3 vNormalW;
-        varying vec3 vViewDir;
-
-        void main() {
-          vNormalW = normalize(mat3(modelMatrix) * normal);
-          vec4 worldPos = modelMatrix * vec4(position, 1.0);
-          vViewDir = normalize(cameraPosition - worldPos.xyz);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        precision highp float;
-        uniform float u_level;
-        varying vec3 vNormalW;
-        varying vec3 vViewDir;
-
-        void main() {
-          float facing = clamp(dot(normalize(vNormalW), normalize(vViewDir)), 0.0, 1.0);
-          float fresnel = pow(1.0 - facing, 2.0 + u_level * 3.0);
-          vec3 glowColor = vec3(0.35, 0.7, 1.0);
-          gl_FragColor = vec4(glowColor * fresnel, fresnel * 0.75);
-        }
-      `,
-    })
-    const innerGeometry = new THREE.SphereGeometry(1.08, 32, 32)
-    group.add(new THREE.Mesh(innerGeometry, innerMaterial))
 
     // --- Particle field: orbiting "planets" tuned to one of 3 bands ---
     const orbitRadius = new Float32Array(PARTICLE_COUNT)
@@ -301,12 +260,12 @@ export default function VisualizerOverlay({
         const energy = bandLevel[orbitBand[i]]
         // Resonance kick: rises fast once the assigned band crosses a
         // threshold, decays slowly otherwise.
-        const target = energy > 0.55 ? (energy - 0.55) * 2.2 : 0
+        const target = energy > 0.35 ? (energy - 0.35) * 3.2 : 0
         perturb[i] +=
-          (target - perturb[i]) * (target > perturb[i] ? 0.25 : 0.04)
+          (target - perturb[i]) * (target > perturb[i] ? 0.35 : 0.04)
 
-        orbitTheta[i] += (orbitSpeed[i] + perturb[i] * 1.8) * dt
-        const r = orbitRadius[i] * (1 + perturb[i] * 0.5)
+        orbitTheta[i] += (orbitSpeed[i] + perturb[i] * 1.4) * dt
+        const r = orbitRadius[i] * (1 + perturb[i] * 0.3)
 
         tmpVec.set(Math.cos(orbitTheta[i]) * r, Math.sin(orbitTheta[i]) * r, 0)
         tmpAxis.set(
@@ -341,7 +300,7 @@ export default function VisualizerOverlay({
 
     const fadeUniforms = {
       u_tex: { value: null as THREE.Texture | null },
-      u_decay: { value: 0.9 },
+      u_decay: { value: 0.88 },
     }
     const fadeMaterial = new THREE.ShaderMaterial({
       uniforms: fadeUniforms,
@@ -432,9 +391,9 @@ export default function VisualizerOverlay({
         const rawBass = bassSum / bassEnd / 255
         const rawMid = midSum / (midEnd - bassEnd) / 255
         const rawTreble = trebleSum / (n - midEnd) / 255
-        bandLevel[0] += (rawBass - bandLevel[0]) * 0.2
-        bandLevel[1] += (rawMid - bandLevel[1]) * 0.2
-        bandLevel[2] += (rawTreble - bandLevel[2]) * 0.2
+        bandLevel[0] += (rawBass - bandLevel[0]) * 0.4
+        bandLevel[1] += (rawMid - bandLevel[1]) * 0.4
+        bandLevel[2] += (rawTreble - bandLevel[2]) * 0.4
       } else {
         // Idle (no analyser yet, or nothing has ever played): decay toward
         // 0 rather than freezing, so the orb settles instead of stopping.
@@ -443,15 +402,14 @@ export default function VisualizerOverlay({
         bandLevel[2] *= 0.95
       }
       const targetLevel = (bandLevel[0] + bandLevel[1] + bandLevel[2]) / 3
-      level += (targetLevel - level) * 0.15
+      level += (targetLevel - level) * 0.3
 
       const motion = REDUCED_MOTION ? 0.35 : 1
-      group.rotation.y += dt * 0.2 * motion
+      group.rotation.y += dt * (0.2 + level * 0.8) * motion
       group.rotation.x = Math.sin(elapsed * 0.15) * 0.2 * motion
 
       outerUniforms.u_time.value = elapsed
       outerUniforms.u_level.value = level
-      innerUniforms.u_level.value = level
 
       updateParticles(dt * motion, bandLevel)
       controls.update()
@@ -483,8 +441,6 @@ export default function VisualizerOverlay({
       renderer.dispose()
       outerGeometry.dispose()
       outerMaterial.dispose()
-      innerGeometry.dispose()
-      innerMaterial.dispose()
       particleGeometry.dispose()
       particleMaterial.dispose()
       dotSprite.dispose()
