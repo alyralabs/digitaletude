@@ -43,34 +43,32 @@ export default function PhotoCarousel({
       <DialogPortal>
         <DialogBackdrop />
         <DialogPositioner className="p-4">
-          {/* Anchored to the positioner (viewport), not the popup: the popup
-              resizes with each photo's aspect ratio, so popup-anchored arrows
-              would jump around between photos. mousedown must not bubble to
-              the positioner or the dismissable outside-click logic treats an
-              arrow press as a close. */}
-          <Button
-            iconOnly
-            rounded
-            severity="secondary"
-            aria-label="Previous photo"
-            className="absolute top-1/2 left-3 z-10 -translate-y-1/2"
-            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
-            onClick={onPrev}
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            iconOnly
-            rounded
-            severity="secondary"
-            aria-label="Next photo"
-            className="absolute top-1/2 right-3 z-10 -translate-y-1/2"
-            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
-            onClick={onNext}
-          >
-            <ChevronRight />
-          </Button>
           <DialogPopup className="max-h-[95vh] max-w-[95vw]">
+            {/* Anchored to the popup so the arrows hug the photo instead of
+                hiding at the viewport edges; they ride along as the popup
+                resizes per photo. shadow-lg lifts them off busy images. */}
+            <Button
+              iconOnly
+              rounded
+              size="large"
+              severity="secondary"
+              aria-label="Previous photo"
+              className="absolute top-1/2 left-2 z-10 -translate-y-1/2 shadow-lg"
+              onClick={onPrev}
+            >
+              <ChevronLeft />
+            </Button>
+            <Button
+              iconOnly
+              rounded
+              size="large"
+              severity="secondary"
+              aria-label="Next photo"
+              className="absolute top-1/2 right-2 z-10 -translate-y-1/2 shadow-lg"
+              onClick={onNext}
+            >
+              <ChevronRight />
+            </Button>
             <DialogHeader>
               <DialogTitle className="truncate">{photo.title}</DialogTitle>
               <DialogHeaderActions>
