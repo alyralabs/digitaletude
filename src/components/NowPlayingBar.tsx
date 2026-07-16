@@ -14,8 +14,16 @@ import { Times } from '@primeicons/react/times'
 import { VolumeOff } from '@primeicons/react/volume-off'
 import { VolumeUp } from '@primeicons/react/volume-up'
 import { WavePulse } from '@primeicons/react/wave-pulse'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
+import {
+  Tooltip,
+  TooltipManager,
+  TooltipPopup,
+  TooltipPortal,
+  TooltipPositioner,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { usePlayer } from '../context/player'
 
 const VisualizerOverlay = lazy(() => import('./VisualizerOverlay'))
@@ -237,18 +245,32 @@ export default function NowPlayingBar() {
         />
       </div>
       {WEBGL2_SUPPORTED && (
-        <Button
-          rounded
-          iconOnly
-          size="small"
-          variant="text"
-          severity="secondary"
-          className="shrink-0 [&_svg]:size-3.5!"
-          aria-label="Open visualizer"
-          onClick={() => setVisualizerOpen(true)}
-        >
-          <WavePulse />
-        </Button>
+        <TooltipManager>
+          <Tooltip openDelay={500}>
+            {/* Styled directly as the button (not wrapped via asChild): this
+                library's asChild just returns the child element unchanged —
+                it does not merge the hover/focus trigger props onto it. */}
+            <TooltipTrigger
+              aria-label="Open visualizer"
+              onClick={() => setVisualizerOpen(true)}
+              className={buttonVariants({
+                variant: 'text',
+                severity: 'secondary',
+                size: 'small',
+                rounded: true,
+                iconOnly: true,
+                className: 'shrink-0 [&_svg]:size-3.5!',
+              })}
+            >
+              <WavePulse />
+            </TooltipTrigger>
+            <TooltipPortal>
+              <TooltipPositioner side="top">
+                <TooltipPopup>Open visualizer</TooltipPopup>
+              </TooltipPositioner>
+            </TooltipPortal>
+          </Tooltip>
+        </TooltipManager>
       )}
       <Button
         rounded

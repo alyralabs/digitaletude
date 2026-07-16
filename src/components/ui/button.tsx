@@ -228,4 +228,5 @@ function Button({
   )
 }
 
-export { Button }
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn convention: pair Button with its cva variants
+export { Button, buttonVariants }

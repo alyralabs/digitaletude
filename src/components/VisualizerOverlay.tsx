@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
@@ -7,9 +7,24 @@ import { Play } from '@primeicons/react/play'
 import { StepBackwardAlt } from '@primeicons/react/step-backward-alt'
 import { StepForwardAlt } from '@primeicons/react/step-forward-alt'
 import { Times } from '@primeicons/react/times'
+import { VolumeOff } from '@primeicons/react/volume-off'
+import { VolumeUp } from '@primeicons/react/volume-up'
+import { WavePulse } from '@primeicons/react/wave-pulse'
 import { Button } from '@/components/ui/button'
+import { Slider } from '@/components/ui/slider'
 import { usePlayer } from '../context/player'
 import type { Track } from '../lib/types'
+
+function formatTime(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds < 0) return '0:00'
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins}:${secs.toString().padStart(2, '0')}`
+}
+
+// Mirrors NowPlayingBar's thumbless-slider treatment.
+const THUMBLESS =
+  'data-[orientation=horizontal]:h-3 [&_[data-part=handle]]:size-2.5 [&_[data-part=handle]]:before:size-1.5 [&_[data-part=handle]]:opacity-0 [&_[data-part=handle]:has(:focus-visible)]:opacity-100'
 
 // Ashima Arts / Stefan Gustavson's classic 3D simplex noise — the standard
 // freely-reusable webgl-noise snippet, reproduced verbatim.
@@ -119,8 +134,26 @@ export default function VisualizerOverlay({
   track: Track
   onClose: () => void
 }) {
-  const { isPlaying, toggle, prev, next, getAnalyser } = usePlayer()
+  const {
+    isPlaying,
+    toggle,
+    prev,
+    next,
+    stop,
+    seekChange,
+    seekCommit,
+    volume,
+    setVolume,
+    subscribeTime,
+    getTime,
+    getDuration,
+    getAnalyser,
+  } = usePlayer()
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const currentTime = useSyncExternalStore(subscribeTime, getTime)
+  const duration = useSyncExternalStore(subscribeTime, getDuration)
+  const [volumeOpen, setVolumeOpen] = useState(false)
+  const total = duration ?? track.durationSeconds ?? 0
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -459,8 +492,15 @@ export default function VisualizerOverlay({
       className="fixed inset-0 z-[100] bg-black"
     >
       <canvas ref={canvasRef} className="absolute inset-0 size-full" />
-      <div className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-3">
-        <div className="flex items-center gap-1 rounded-full border border-white/10 bg-black/40 px-2 py-1.5 backdrop-blur">
+      {/* Same pill as NowPlayingBar, floating over the canvas instead of
+          docked in the footer — the desktop static/docking classes don't
+          apply since there's no footer slot to dock into here. */}
+      <div
+        role="region"
+        aria-label="Now playing"
+        className="fixed bottom-6 left-1/2 z-10 flex w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 items-center gap-2.5 rounded-full border border-surface bg-panel py-1 pr-2.5 pl-1.5 shadow-lg"
+      >
+        <div className="flex shrink-0 items-center -space-x-0.5">
           <Button
             iconOnly
             rounded
@@ -468,7 +508,7 @@ export default function VisualizerOverlay({
             variant="text"
             severity="secondary"
             aria-label="Previous track"
-            className="text-white [&_svg]:size-3.5!"
+            className="[&_svg]:size-3.5!"
             onClick={prev}
           >
             <StepBackwardAlt />
@@ -481,7 +521,7 @@ export default function VisualizerOverlay({
             aria-label={
               isPlaying ? `Pause ${track.title}` : `Play ${track.title}`
             }
-            className="text-white [&_svg]:size-4!"
+            className="[&_svg]:size-4!"
             onClick={() => toggle(track)}
           >
             {isPlaying ? <Pause /> : <Play />}
@@ -493,12 +533,103 @@ export default function VisualizerOverlay({
             variant="text"
             severity="secondary"
             aria-label="Next track"
-            className="text-white [&_svg]:size-3.5!"
+            className="[&_svg]:size-3.5!"
             onClick={next}
           >
             <StepForwardAlt />
           </Button>
         </div>
+        {track.coverUrl ? (
+          <img
+            src={track.coverUrl}
+            alt={`${track.title} cover art`}
+            decoding="async"
+            className="size-8 shrink-0 rounded-md border border-surface object-cover"
+          />
+        ) : (
+          <div className="size-8 shrink-0 rounded-md border border-surface bg-page" />
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs leading-tight font-medium text-color">
+            {track.title || 'Untitled'}
+          </p>
+          <p className="font-display text-[10px] leading-tight font-semibold tracking-[0.14em] text-muted-color uppercase">
+            Alyra
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 text-[10px] leading-none tabular-nums text-muted-color">
+              {formatTime(currentTime)}
+            </span>
+            <Slider
+              value={currentTime}
+              min={0}
+              max={total}
+              onValueChange={(e) => {
+                if (typeof e.value === 'number') seekChange(e.value)
+              }}
+              onValueChangeEnd={(e) => {
+                if (typeof e.value === 'number') seekCommit(e.value)
+              }}
+              className={`min-w-0 flex-1 ${THUMBLESS}`}
+            />
+            <span className="shrink-0 text-[10px] leading-none tabular-nums text-muted-color">
+              {formatTime(total)}
+            </span>
+          </div>
+        </div>
+        <div className="relative shrink-0">
+          <Button
+            iconOnly
+            rounded
+            size="small"
+            variant="text"
+            severity="secondary"
+            aria-label="Volume"
+            aria-expanded={volumeOpen}
+            onClick={() => setVolumeOpen((open) => !open)}
+          >
+            {volume === 0 ? <VolumeOff /> : <VolumeUp />}
+          </Button>
+          {volumeOpen && (
+            <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-full border border-surface bg-panel px-1.5 py-3 shadow-lg">
+              <Slider
+                orientation="vertical"
+                value={volume}
+                min={0}
+                max={1}
+                step={0.01}
+                onValueChange={(e) => {
+                  if (typeof e.value === 'number') setVolume(e.value)
+                }}
+                className={`data-[orientation=vertical]:w-3 ${THUMBLESS}`}
+              />
+            </div>
+          )}
+        </div>
+        <Button
+          rounded
+          iconOnly
+          size="small"
+          variant="text"
+          severity="secondary"
+          className="shrink-0 [&_svg]:size-3.5!"
+          aria-label="Close visualizer"
+          onClick={onClose}
+        >
+          <WavePulse />
+        </Button>
+        <Button
+          rounded
+          iconOnly
+          size="small"
+          variant="text"
+          severity="secondary"
+          className="shrink-0 [&_svg]:size-3!"
+          aria-label="Close player"
+          onClick={stop}
+        >
+          <Times />
+        </Button>
       </div>
       <Button
         rounded
