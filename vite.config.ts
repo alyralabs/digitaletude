@@ -14,6 +14,15 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Without this, Vitest's SSR externalization can bypass the
+    // '@primeicons/react/core' alias below for whichever icon module is
+    // resolved first in a given run — inlining forces every icon through
+    // Vite's own resolve pipeline, where the alias reliably applies.
+    server: {
+      deps: {
+        inline: ['@primeicons/react'],
+      },
+    },
   },
   resolve: {
     alias: {

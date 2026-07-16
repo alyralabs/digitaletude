@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import { Pause } from '@primeicons/react/pause'
 import { Play } from '@primeicons/react/play'
 import { StepBackwardAlt } from '@primeicons/react/step-backward-alt'
@@ -6,9 +13,22 @@ import { StepForwardAlt } from '@primeicons/react/step-forward-alt'
 import { Times } from '@primeicons/react/times'
 import { VolumeOff } from '@primeicons/react/volume-off'
 import { VolumeUp } from '@primeicons/react/volume-up'
+import { WavePulse } from '@primeicons/react/wave-pulse'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { usePlayer } from '../context/player'
+
+const VisualizerOverlay = lazy(() => import('./VisualizerOverlay'))
+
+// Feature-detected once: no WebGL2 means no visualizer button, rather than
+// a button that opens onto a broken scene.
+const WEBGL2_SUPPORTED = (() => {
+  try {
+    return !!document.createElement('canvas').getContext('webgl2')
+  } catch {
+    return false
+  }
+})()
 
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds) || seconds < 0) return '0:00'
@@ -54,6 +74,7 @@ export default function NowPlayingBar() {
   const duration = useSyncExternalStore(subscribeTime, getDuration)
   const lastVolume = useRef(1)
   const [volumeOpen, setVolumeOpen] = useState(false)
+  const [visualizerOpen, setVisualizerOpen] = useState(false)
 
   // The popup is display-hidden past 1200px, but the open state would
   // survive a resize and pop it back up on return to mobile — close it
@@ -215,6 +236,20 @@ export default function NowPlayingBar() {
           className={`w-14 ${THUMBLESS}`}
         />
       </div>
+      {WEBGL2_SUPPORTED && (
+        <Button
+          rounded
+          iconOnly
+          size="small"
+          variant="text"
+          severity="secondary"
+          className="shrink-0 [&_svg]:size-3.5!"
+          aria-label="Open visualizer"
+          onClick={() => setVisualizerOpen(true)}
+        >
+          <WavePulse />
+        </Button>
+      )}
       <Button
         rounded
         iconOnly
@@ -227,6 +262,14 @@ export default function NowPlayingBar() {
       >
         <Times />
       </Button>
+      {visualizerOpen && (
+        <Suspense fallback={null}>
+          <VisualizerOverlay
+            track={track}
+            onClose={() => setVisualizerOpen(false)}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }

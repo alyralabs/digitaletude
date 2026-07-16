@@ -29,6 +29,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     scrubbing: false,
     listeners: new Set(),
   })
+  const analyserRef = useRef<AnalyserNode | null>(null)
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [queue, setQueue] = useState<Track[]>([])
@@ -59,9 +60,34 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     return storeRef.current.duration
   }
 
+  function ensureAnalyser() {
+    const audio = audioRef.current
+    if (!audio || analyserRef.current) return
+    // createMediaElementSource throws InvalidStateError if called twice on
+    // the same element, so this only ever runs once, on the first play() —
+    // which is guaranteed to follow a user gesture, satisfying the
+    // AudioContext autoplay-suspend policy too.
+    const AudioContextCtor =
+      window.AudioContext ||
+      (window as typeof window & { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext
+    // Absent in test environments (jsdom has no Web Audio API) and very old
+    // browsers — playback itself never depends on this, only the
+    // visualizer's analyser does, so skip quietly rather than throw.
+    if (!AudioContextCtor) return
+    const ctx = new AudioContextCtor()
+    const source = ctx.createMediaElementSource(audio)
+    const analyser = ctx.createAnalyser()
+    analyser.fftSize = 256
+    source.connect(analyser)
+    analyser.connect(ctx.destination)
+    analyserRef.current = analyser
+  }
+
   function play(track: Track) {
     const audio = audioRef.current
     if (!audio) return
+    ensureAnalyser()
     // Only reassign `src` when it's actually a different track — this is
     // the fix for the reload-on-resume bug: reassigning unconditionally
     // triggers the media-element loading algorithm from scratch even when
@@ -75,6 +101,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     void audio.play()
     setCurrentTrack(track)
     setIsPlaying(true)
+  }
+
+  function getAnalyser() {
+    return analyserRef.current
   }
 
   function toggle(track: Track, newQueue?: Track[]) {
@@ -154,13 +184,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         subscribeTime,
         getTime,
         getDuration,
+        getAnalyser,
       }}
     >
       {/* One shared player: swapping `src` here avoids multiple audio
           elements playing simultaneously, since there's no browser-level
-          exclusivity between separate <audio> tags. */}
+          exclusivity between separate <audio> tags. crossOrigin is set
+          before any src is ever assigned so the visualizer's AnalyserNode
+          isn't fed a CORS-tainted (silent) source once ensureAnalyser wires
+          this element into the Web Audio graph. */}
       <audio
         ref={audioRef}
+        crossOrigin="anonymous"
         onEnded={() => {
           // Auto-advance through the queue (wrapping); a queue-less track
           // just stops like before.

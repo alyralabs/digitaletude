@@ -22,6 +22,11 @@ export type PlayerContextValue = {
   subscribeTime: (listener: () => void) => () => void
   getTime: () => number
   getDuration: () => number | null
+  // Lazily created on first play() (guaranteed to follow a user gesture) and
+  // cached for the life of the shared <audio> element — createMediaElementSource
+  // throws if called twice on the same element, so this must never be
+  // recreated per visualizer-open.
+  getAnalyser: () => AnalyserNode | null
 }
 
 export const PlayerContext = createContext<PlayerContextValue | null>(null)
