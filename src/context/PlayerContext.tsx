@@ -76,6 +76,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     // visualizer's analyser does, so skip quietly rather than throw.
     if (!AudioContextCtor) return
     const ctx = new AudioContextCtor()
+    // Safari can still hand back a suspended context despite the gesture;
+    // a suspended graph captures the element's audio and plays nothing.
+    if (ctx.state === 'suspended') void ctx.resume()
     const source = ctx.createMediaElementSource(audio)
     const analyser = ctx.createAnalyser()
     analyser.fftSize = 256

@@ -84,6 +84,12 @@ export default function NowPlayingBar() {
   const [volumeOpen, setVolumeOpen] = useState(false)
   const [visualizerOpen, setVisualizerOpen] = useState(false)
 
+  // Closing the player only hides this bar (it stays mounted), so an open
+  // visualizer must be closed for real — otherwise it would pop back open
+  // on the next play. Render-phase adjustment per React's derived-state
+  // guidance rather than an effect.
+  if (!track && visualizerOpen) setVisualizerOpen(false)
+
   // The popup is display-hidden past 1200px, but the open state would
   // survive a resize and pop it back up on return to mobile — close it
   // for real when the viewport crosses into the docked layout.

@@ -124,6 +124,10 @@ function makeRT(w: number, h: number) {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
     format: THREE.RGBAFormat,
+    // The scene renders into these targets, not the canvas framebuffer, so
+    // the renderer's antialias flag never applies — multisample here instead
+    // (WebGL2 is guaranteed by the entry-point gate in NowPlayingBar).
+    samples: 4,
   })
 }
 
@@ -289,13 +293,17 @@ export default function VisualizerOverlay({
     const tmpColor = new THREE.Color()
 
     function updateParticles(dt: number, bandLevel: number[]) {
+      // Smoothing constants were tuned at 60fps; exponentiating by dt*60
+      // keeps the feel identical on 120Hz+ displays.
+      const riseK = 1 - Math.pow(1 - 0.35, dt * 60)
+      const fallK = 1 - Math.pow(1 - 0.04, dt * 60)
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         const energy = bandLevel[orbitBand[i]]
         // Resonance kick: rises fast once the assigned band crosses a
         // threshold, decays slowly otherwise.
         const target = energy > 0.35 ? (energy - 0.35) * 3.2 : 0
         perturb[i] +=
-          (target - perturb[i]) * (target > perturb[i] ? 0.35 : 0.04)
+          (target - perturb[i]) * (target > perturb[i] ? riseK : fallK)
 
         orbitTheta[i] += (orbitSpeed[i] + perturb[i] * 1.4) * dt
         const r = orbitRadius[i] * (1 + perturb[i] * 0.3)
@@ -356,8 +364,9 @@ export default function VisualizerOverlay({
         }
       `,
     })
+    const quadGeometry = new THREE.PlaneGeometry(2, 2)
     const fadeScene = new THREE.Scene()
-    fadeScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), fadeMaterial))
+    fadeScene.add(new THREE.Mesh(quadGeometry, fadeMaterial))
 
     const copyUniforms = { u_tex: { value: null as THREE.Texture | null } }
     const copyMaterial = new THREE.ShaderMaterial({
@@ -381,7 +390,7 @@ export default function VisualizerOverlay({
       `,
     })
     const copyScene = new THREE.Scene()
-    copyScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), copyMaterial))
+    copyScene.add(new THREE.Mesh(quadGeometry, copyMaterial))
 
     function resize() {
       const w = canvas!.clientWidth || 1
@@ -409,6 +418,9 @@ export default function VisualizerOverlay({
       const dt = Math.min(clock.getDelta(), 0.05)
       elapsed += dt
 
+      // Like the particle constants, these lerp/decay factors were tuned at
+      // 60fps — exponentiate by dt*60 so 120Hz+ displays match.
+      const bandK = 1 - Math.pow(1 - 0.4, dt * 60)
       const analyser = getAnalyser()
       if (analyser) {
         analyser.getByteFrequencyData(freqData)
@@ -424,18 +436,19 @@ export default function VisualizerOverlay({
         const rawBass = bassSum / bassEnd / 255
         const rawMid = midSum / (midEnd - bassEnd) / 255
         const rawTreble = trebleSum / (n - midEnd) / 255
-        bandLevel[0] += (rawBass - bandLevel[0]) * 0.4
-        bandLevel[1] += (rawMid - bandLevel[1]) * 0.4
-        bandLevel[2] += (rawTreble - bandLevel[2]) * 0.4
+        bandLevel[0] += (rawBass - bandLevel[0]) * bandK
+        bandLevel[1] += (rawMid - bandLevel[1]) * bandK
+        bandLevel[2] += (rawTreble - bandLevel[2]) * bandK
       } else {
         // Idle (no analyser yet, or nothing has ever played): decay toward
         // 0 rather than freezing, so the orb settles instead of stopping.
-        bandLevel[0] *= 0.95
-        bandLevel[1] *= 0.95
-        bandLevel[2] *= 0.95
+        const idleDecay = Math.pow(0.95, dt * 60)
+        bandLevel[0] *= idleDecay
+        bandLevel[1] *= idleDecay
+        bandLevel[2] *= idleDecay
       }
       const targetLevel = (bandLevel[0] + bandLevel[1] + bandLevel[2]) / 3
-      level += (targetLevel - level) * 0.3
+      level += (targetLevel - level) * (1 - Math.pow(1 - 0.3, dt * 60))
 
       const motion = REDUCED_MOTION ? 0.35 : 1
       group.rotation.y += dt * (0.2 + level * 0.8) * motion
@@ -447,7 +460,9 @@ export default function VisualizerOverlay({
       updateParticles(dt * motion, bandLevel)
       controls.update()
 
-      // 1. fade the previous frame into rtB
+      // 1. fade the previous frame into rtB (0.88/frame tuned at 60fps —
+      // dt-corrected so trail length doesn't shrink on high-refresh displays)
+      fadeUniforms.u_decay.value = Math.pow(0.88, dt * 60)
       fadeUniforms.u_tex.value = rtA.texture
       renderer.setRenderTarget(rtB)
       renderer.render(fadeScene, trailCamera)
@@ -471,17 +486,25 @@ export default function VisualizerOverlay({
       cancelAnimationFrame(rafId)
       resizeObserver.disconnect()
       controls.dispose()
-      renderer.dispose()
       outerGeometry.dispose()
       outerMaterial.dispose()
       particleGeometry.dispose()
       particleMaterial.dispose()
       dotSprite.dispose()
+      quadGeometry.dispose()
       fadeMaterial.dispose()
       copyMaterial.dispose()
       rtA.dispose()
       rtB.dispose()
+      renderer.dispose()
+      // dispose() alone leaves the GL context alive until GC; browsers cap
+      // ~16 contexts, so rapid open/close cycles could evict live ones.
+      renderer.forceContextLoss()
     }
+    // getAnalyser only captures a ref, so React Compiler gives it a stable
+    // identity and this effect runs once per mount. If the compiler ever
+    // bails on PlayerProvider, this would rebuild the scene on every player
+    // state change — visible as the orb/camera resetting on pause.
   }, [getAnalyser])
 
   return createPortal(
