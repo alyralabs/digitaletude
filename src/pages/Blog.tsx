@@ -1,6 +1,8 @@
+import ReactMarkdown from 'react-markdown'
 import { Link, useLoaderData } from 'react-router'
 import { Card, CardBody, CardCaption, CardTitle } from '@/components/ui/card'
 import PageSection from '../components/PageSection'
+import { formatDate } from '../lib/date'
 import type { PostSummary } from '../lib/types'
 
 export default function Blog() {
@@ -17,7 +19,10 @@ export default function Blog() {
           <div className="grid gap-6 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {posts.map((post, i) => (
               <Link key={post.slug} to={`/blog/${post.slug}`}>
-                <Card className="overflow-hidden">
+                {/* Lift-on-hover is deliberately slight: shadow one step up
+                    plus a half-unit rise — enough to register the hover
+                    without the grid feeling springy. */}
+                <Card className="overflow-hidden shadow-md transition-[box-shadow,translate] duration-200 hover:-translate-y-0.5 hover:shadow-lg">
                   {post.coverUrl && (
                     <img
                       src={post.coverUrl}
@@ -34,9 +39,26 @@ export default function Blog() {
                     <CardCaption>
                       <CardTitle>{post.title}</CardTitle>
                     </CardCaption>
-                    <p className="line-clamp-4 text-sm leading-relaxed text-muted-color">
-                      {post.excerpt}
-                    </p>
+                    {post.publishedAt && (
+                      <p className="text-xs text-muted-color">
+                        <time dateTime={post.publishedAt}>
+                          {formatDate(post.publishedAt)}
+                        </time>
+                      </p>
+                    )}
+                    {/* Text-level markdown only: the card is already inside
+                        a <Link>, so anchors are unwrapped to their text
+                        (nested <a> is invalid HTML), and block furniture
+                        (headings, images) degrades to plain text in a
+                        4-line clamp. */}
+                    <div className="line-clamp-4 text-sm leading-relaxed text-muted-color [&_code]:rounded [&_code]:bg-page [&_code]:px-1 [&_code]:text-xs">
+                      <ReactMarkdown
+                        allowedElements={['p', 'strong', 'em', 'del', 'code']}
+                        unwrapDisallowed
+                      >
+                        {post.excerpt}
+                      </ReactMarkdown>
+                    </div>
                   </CardBody>
                 </Card>
               </Link>
