@@ -52,7 +52,7 @@ export default function NavBar() {
   return (
     <header className="sticky top-0 z-50 border-b border-surface bg-page/85 backdrop-blur-sm">
       <nav className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-6 py-3 xl:max-w-7xl xl:px-8 2xl:max-w-[1800px] 2xl:px-12">
-        <NavLink to="/" aria-label="digitaletude, home" end>
+        <NavLink to="/" aria-label="alyralabs, home" end>
           <Logo />
         </NavLink>
 

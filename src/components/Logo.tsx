@@ -6,7 +6,7 @@ export default function Logo() {
       className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary font-display text-sm font-semibold text-primary-contrast"
       aria-hidden="true"
     >
-      DE
+      AL
     </span>
   )
 }

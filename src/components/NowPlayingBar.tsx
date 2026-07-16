@@ -1,4 +1,4 @@
-import { useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Pause } from '@primeicons/react/pause'
 import { Play } from '@primeicons/react/play'
 import { StepBackwardAlt } from '@primeicons/react/step-backward-alt'
@@ -54,6 +54,18 @@ export default function NowPlayingBar() {
   const duration = useSyncExternalStore(subscribeTime, getDuration)
   const lastVolume = useRef(1)
   const [volumeOpen, setVolumeOpen] = useState(false)
+
+  // The popup is display-hidden past 1200px, but the open state would
+  // survive a resize and pop it back up on return to mobile — close it
+  // for real when the viewport crosses into the docked layout.
+  useEffect(() => {
+    const desktop = matchMedia('(min-width: 1200px)')
+    const close = (e: MediaQueryListEvent) => {
+      if (e.matches) setVolumeOpen(false)
+    }
+    desktop.addEventListener('change', close)
+    return () => desktop.removeEventListener('change', close)
+  }, [])
 
   if (!track) return null
   const total = duration ?? track.durationSeconds ?? 0
