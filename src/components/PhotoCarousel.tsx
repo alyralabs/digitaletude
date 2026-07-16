@@ -43,6 +43,33 @@ export default function PhotoCarousel({
       <DialogPortal>
         <DialogBackdrop />
         <DialogPositioner className="p-4">
+          {/* Anchored to the positioner (viewport), not the popup: the popup
+              resizes with each photo's aspect ratio, so popup-anchored arrows
+              would jump around between photos. mousedown must not bubble to
+              the positioner or the dismissable outside-click logic treats an
+              arrow press as a close. */}
+          <Button
+            iconOnly
+            rounded
+            severity="secondary"
+            aria-label="Previous photo"
+            className="absolute top-1/2 left-3 z-10 -translate-y-1/2"
+            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+            onClick={onPrev}
+          >
+            <ChevronLeft />
+          </Button>
+          <Button
+            iconOnly
+            rounded
+            severity="secondary"
+            aria-label="Next photo"
+            className="absolute top-1/2 right-3 z-10 -translate-y-1/2"
+            onMouseDown={(e: React.MouseEvent) => e.stopPropagation()}
+            onClick={onNext}
+          >
+            <ChevronRight />
+          </Button>
           <DialogPopup className="max-h-[95vh] max-w-[95vw]">
             <DialogHeader>
               <DialogTitle className="truncate">{photo.title}</DialogTitle>
@@ -62,17 +89,7 @@ export default function PhotoCarousel({
                 <ExifOverlay exif={photo.exif} />
               </div>
             </DialogContent>
-            <DialogFooter className="items-center justify-between">
-              <Button
-                iconOnly
-                rounded
-                variant="text"
-                severity="secondary"
-                aria-label="Previous photo"
-                onClick={onPrev}
-              >
-                <ChevronLeft />
-              </Button>
+            <DialogFooter className="items-center justify-center">
               <a
                 href={photo.originalUrl}
                 target="_blank"
@@ -81,16 +98,6 @@ export default function PhotoCarousel({
               >
                 View Original
               </a>
-              <Button
-                iconOnly
-                rounded
-                variant="text"
-                severity="secondary"
-                aria-label="Next photo"
-                onClick={onNext}
-              >
-                <ChevronRight />
-              </Button>
             </DialogFooter>
           </DialogPopup>
         </DialogPositioner>

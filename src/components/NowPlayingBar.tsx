@@ -44,6 +44,16 @@ export default function NowPlayingBar() {
       aria-label="Now playing"
       className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 lg:flex-nowrap"
     >
+      {/* No order class: default 0 keeps the cover leftmost on both the
+          one-row (lg+) and wrapped two-row layouts. */}
+      {track.coverUrl && (
+        <img
+          src={track.coverUrl}
+          alt={`${track.title} cover art`}
+          decoding="async"
+          className="size-9 shrink-0 rounded border border-surface object-cover lg:size-10"
+        />
+      )}
       <Button
         rounded
         iconOnly

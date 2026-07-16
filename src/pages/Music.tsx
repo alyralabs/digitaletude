@@ -85,6 +85,19 @@ function TrackRow({
   const duration = formatDuration(track.durationSeconds)
   return (
     <div className="flex items-center gap-3 py-1.5">
+      {/* Empty placeholder square when there's no cover art, so titles in a
+          mixed list stay aligned instead of shifting left per row. */}
+      {track.coverUrl ? (
+        <img
+          src={track.coverUrl}
+          alt={`${track.title} cover art`}
+          loading="lazy"
+          decoding="async"
+          className="size-14 shrink-0 rounded-md border border-surface object-cover"
+        />
+      ) : (
+        <div className="size-14 shrink-0 rounded-md border border-surface bg-panel" />
+      )}
       <Button
         rounded
         iconOnly

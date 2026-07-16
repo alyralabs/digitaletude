@@ -100,7 +100,7 @@ beforeEach(() => {
         createdAt: '2026-01-01T00:00:00Z',
         metadata: {},
         audioUrl: 'https://example.com/t1.mp3',
-        coverUrl: null,
+        coverUrl: 'https://example.com/covers/t1.jpg',
       },
     ],
   } satisfies MusicPayload)
@@ -120,6 +120,9 @@ describe('Layout player persistence', () => {
     // the bar is lazy-loaded, so it appears async even in jsdom
     const bar = await screen.findByRole('region', { name: 'Now playing' })
     expect(within(bar).getByText('Persistent Track')).toBeInTheDocument()
+    expect(
+      within(bar).getByAltText('Persistent Track cover art'),
+    ).toHaveAttribute('src', 'https://example.com/covers/t1.jpg')
 
     await user.click(screen.getByRole('link', { name: 'Photography' }))
     await screen.findByText('No photos yet.')

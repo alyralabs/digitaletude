@@ -118,6 +118,26 @@ describe('Music', () => {
     ).toBeInTheDocument()
   })
 
+  it('renders cover art next to a track that has it, placeholder otherwise', async () => {
+    vi.mocked(fetchMusic).mockResolvedValue({
+      albums: [],
+      singles: [
+        track({
+          id: 'with-cover',
+          title: 'Covered Track',
+          coverUrl: 'https://example.com/covers/t1.jpg',
+        }),
+        track({ id: 'no-cover', title: 'Bare Track' }),
+      ],
+    } satisfies MusicPayload)
+
+    renderMusic()
+
+    const cover = await screen.findByAltText('Covered Track cover art')
+    expect(cover).toHaveAttribute('src', 'https://example.com/covers/t1.jpg')
+    expect(screen.queryByAltText('Bare Track cover art')).toBeNull()
+  })
+
   it('renders external metadata links', async () => {
     vi.mocked(fetchMusic).mockResolvedValue({
       albums: [],
