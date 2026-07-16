@@ -45,6 +45,7 @@ function Slider({
         <PRSlider.Handle
           key={index}
           index={index}
+          data-slot="slider-handle"
           className="flex size-5 cursor-grab touch-none items-center justify-center rounded-full
             bg-surface-200 transition-colors duration-200 dark:bg-surface-700
             has-focus-visible:outline-1 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary
