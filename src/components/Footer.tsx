@@ -10,7 +10,11 @@ export default function Footer() {
   const { currentTrack } = usePlayer()
 
   return (
-    <footer className="border-t border-surface">
+    /* sticky bottom-0 pins the footer (and the player bar in it) to the
+       viewport on long pages while keeping it in normal flow — short pages
+       still get it exactly at the bottom via Layout's min-h-svh column, with
+       no reserved-padding hacks. Opaque bg because content scrolls beneath. */
+    <footer className="sticky bottom-0 z-40 border-t border-surface bg-page">
       <div className="mx-auto grid max-w-5xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 px-6 py-3 xl:max-w-7xl xl:px-8 2xl:max-w-[1800px] 2xl:px-12">
         <div className="min-w-0">
           {currentTrack && (

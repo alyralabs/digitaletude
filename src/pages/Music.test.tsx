@@ -54,6 +54,25 @@ function track(overrides: Partial<Track> = {}): Track {
 }
 
 describe('Music', () => {
+  it('shows the skeleton while the catalog loads, then swaps in content', async () => {
+    let resolve!: (value: MusicPayload) => void
+    vi.mocked(fetchMusic).mockReturnValue(
+      new Promise<MusicPayload>((r) => {
+        resolve = r
+      }),
+    )
+
+    const { container } = renderMusic()
+
+    await screen.findByText('Music')
+    expect(container.querySelector('.animate-pulse')).toBeInTheDocument()
+
+    resolve({ albums: [], singles: [track({ title: 'Loaded Track' })] })
+
+    expect(await screen.findByText('Loaded Track')).toBeInTheDocument()
+    expect(container.querySelector('.animate-pulse')).toBeNull()
+  })
+
   it('fetches the catalog and renders the empty state when there is nothing', async () => {
     vi.mocked(fetchMusic).mockResolvedValue({
       albums: [],

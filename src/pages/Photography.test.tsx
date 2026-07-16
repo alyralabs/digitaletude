@@ -5,6 +5,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router'
 import { PrimeReactProvider } from '@primereact/core'
 import Photography from './Photography'
 import { photographyLoader as loader } from '../lib/loaders'
+import RouteError from '../components/RouteError'
 import type { Photo } from '../lib/types'
 
 vi.mock('../lib/api', () => ({
@@ -25,7 +26,7 @@ import { fetchPhotos } from '../lib/api'
 
 function renderPhotography() {
   const router = createMemoryRouter([
-    { path: '/', Component: Photography, loader },
+    { path: '/', Component: Photography, loader, errorElement: <RouteError /> },
   ])
   return render(
     <PrimeReactProvider>
@@ -52,6 +53,25 @@ function makePhoto(overrides: Partial<Photo> = {}): Photo {
 const photo = makePhoto()
 
 describe('Photography grid', () => {
+  it('shows the skeleton while photos load, then swaps in the gallery', async () => {
+    let resolve!: (value: Photo[]) => void
+    vi.mocked(fetchPhotos).mockReturnValue(
+      new Promise<Photo[]>((r) => {
+        resolve = r
+      }),
+    )
+
+    const { container } = renderPhotography()
+
+    await screen.findByText('Photography')
+    expect(container.querySelector('.animate-pulse')).toBeInTheDocument()
+
+    resolve([photo])
+
+    expect(await screen.findByAltText('Mountain')).toBeInTheDocument()
+    expect(container.querySelector('.animate-pulse')).toBeNull()
+  })
+
   it('fetches photos and renders each thumbnail as a clickable button with width/height', async () => {
     vi.mocked(fetchPhotos).mockResolvedValue([photo])
 
@@ -65,6 +85,16 @@ describe('Photography grid', () => {
     expect(img.closest('a')).not.toBeInTheDocument()
 
     expect(fetchPhotos).toHaveBeenCalled()
+  })
+
+  it('routes a fetch failure to the error boundary (rejection surfaces via use(), not the loader)', async () => {
+    vi.mocked(fetchPhotos).mockRejectedValue(
+      new Error('content request failed: 500'),
+    )
+
+    renderPhotography()
+
+    expect(await screen.findByText('Something went wrong')).toBeInTheDocument()
   })
 
   it('renders the empty state when there are no photos', async () => {
