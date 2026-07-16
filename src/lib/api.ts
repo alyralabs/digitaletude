@@ -3,7 +3,6 @@
 // repo) restrict anon to reads, and to published posts only. Column aliases
 // in the select strings map snake_case DB columns onto the camelCase types
 // in ./types, and storage URLs are composed here (the DB stores paths).
-import { deriveExcerpt } from './excerpt'
 import type { MusicPayload, Photo, Post, PostSummary, Track } from './types'
 
 function supabaseUrl(): string {
@@ -109,18 +108,17 @@ type PostSummaryRow = {
   excerpt: string
   coverImagePath: string | null
   publishedAt: string | null
-  contentMarkdown: string
 }
 
-const EXCERPT_LEN = 200
-
+// No content_markdown here: the publish step (Repo.Publish in the API repo)
+// derives and stores an excerpt when the author left it blank, so the list
+// payload no longer grows with every post body ever written.
 export async function fetchPosts(): Promise<PostSummary[]> {
   const rows = await rest<PostSummaryRow[]>(
-    'posts?status=eq.published&select=title,slug,excerpt,coverImagePath:cover_image_path,publishedAt:published_at,contentMarkdown:content_markdown&order=published_at.desc',
+    'posts?status=eq.published&select=title,slug,excerpt,coverImagePath:cover_image_path,publishedAt:published_at&order=published_at.desc',
   )
-  return rows.map(({ coverImagePath, contentMarkdown, ...post }) => ({
+  return rows.map(({ coverImagePath, ...post }) => ({
     ...post,
-    excerpt: post.excerpt || deriveExcerpt(contentMarkdown, EXCERPT_LEN),
     coverUrl: coverImagePath ? publicUrl('blog', coverImagePath) : null,
   }))
 }

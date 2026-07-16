@@ -127,7 +127,7 @@ describe('fetchMusic', () => {
 })
 
 describe('fetchPosts', () => {
-  it('filters to published, derives missing excerpts, and drops the body', async () => {
+  it('filters to published and never requests the post body', async () => {
     fetchMock.mockResolvedValue(
       jsonResponse([
         {
@@ -136,15 +136,6 @@ describe('fetchPosts', () => {
           excerpt: 'hand-written',
           coverImagePath: 'covers/p1.jpg',
           publishedAt: '2026-01-01T00:00:00Z',
-          contentMarkdown: '# Heading\n\nBody.',
-        },
-        {
-          title: 'No Excerpt',
-          slug: 'no-excerpt',
-          excerpt: '',
-          coverImagePath: null,
-          publishedAt: '2026-01-02T00:00:00Z',
-          contentMarkdown: '# Heading\n\nDerived from the body text.',
         },
       ]),
     )
@@ -154,15 +145,14 @@ describe('fetchPosts', () => {
     const [url] = fetchMock.mock.calls[0]
     expect(url).toContain('status=eq.published')
     expect(url).toContain('order=published_at.desc')
+    // Excerpts are stored at publish time (Repo.Publish in the API repo);
+    // the list must not pull content_markdown just to derive one.
+    expect(url).not.toContain('content_markdown')
 
     expect(posts[0].excerpt).toBe('hand-written')
     expect(posts[0].coverUrl).toBe(
       `${SUPABASE}/storage/v1/object/public/blog/covers/p1.jpg`,
     )
-    // Heading markers are stripped but their text is kept, per deriveExcerpt.
-    expect(posts[1].excerpt).toBe('Heading Derived from the body text.')
-    expect(posts[1].coverUrl).toBeNull()
-    expect(posts[1]).not.toHaveProperty('contentMarkdown')
   })
 })
 
