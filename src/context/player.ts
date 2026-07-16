@@ -4,10 +4,16 @@ import type { Track } from '../lib/types'
 export type PlayerContextValue = {
   currentTrack: Track | null
   isPlaying: boolean
-  toggle: (track: Track) => void
+  // Passing a queue tells the player what prev/next/auto-advance walk
+  // through; playing without one leaves the previous queue in place.
+  toggle: (track: Track, queue?: Track[]) => void
+  prev: () => void
+  next: () => void
   stop: () => void
   seekChange: (value: number) => void
   seekCommit: (value: number) => void
+  volume: number
+  setVolume: (value: number) => void
   // Playback time ticks ~4x/second — exposing it as React state here would
   // re-render every consumer (Footer, the whole Music track list) on each
   // tick for the entire listening session. Instead it lives in a plain

@@ -40,6 +40,18 @@ vi.mock('@primeicons/react/chevron-left', () => ({
 vi.mock('@primeicons/react/chevron-right', () => ({
   ChevronRight: () => <span>chevron-right-icon</span>,
 }))
+vi.mock('@primeicons/react/step-backward-alt', () => ({
+  StepBackwardAlt: () => <span>prev-icon</span>,
+}))
+vi.mock('@primeicons/react/step-forward-alt', () => ({
+  StepForwardAlt: () => <span>next-icon</span>,
+}))
+vi.mock('@primeicons/react/volume-up', () => ({
+  VolumeUp: () => <span>volume-icon</span>,
+}))
+vi.mock('@primeicons/react/volume-off', () => ({
+  VolumeOff: () => <span>volume-off-icon</span>,
+}))
 
 import { fetchMusic, fetchPhotos } from '../lib/api'
 

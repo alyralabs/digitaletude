@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { PlayerContext } from './player'
 import type { Track } from '../lib/types'
 
@@ -12,6 +12,15 @@ type TimeStore = {
   listeners: Set<() => void>
 }
 
+const VOLUME_KEY = 'player-volume'
+
+function getInitialVolume() {
+  const raw = localStorage.getItem(VOLUME_KEY)
+  if (raw === null) return 1
+  const parsed = Number(raw)
+  return Number.isFinite(parsed) && parsed >= 0 && parsed <= 1 ? parsed : 1
+}
+
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const storeRef = useRef<TimeStore>({
@@ -22,6 +31,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   })
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [queue, setQueue] = useState<Track[]>([])
+  const [volume, setVolumeState] = useState(getInitialVolume)
+
+  // The <audio> element mounts after the first render, so the persisted
+  // volume can't be applied inline where state initializes.
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = volume
+  }, [volume])
 
   function emit() {
     for (const listener of storeRef.current.listeners) listener()
@@ -42,14 +59,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     return storeRef.current.duration
   }
 
-  function toggle(track: Track) {
+  function play(track: Track) {
     const audio = audioRef.current
     if (!audio) return
-    if (currentTrack?.id === track.id && isPlaying) {
-      audio.pause()
-      setIsPlaying(false)
-      return
-    }
     // Only reassign `src` when it's actually a different track — this is
     // the fix for the reload-on-resume bug: reassigning unconditionally
     // triggers the media-element loading algorithm from scratch even when
@@ -63,6 +75,40 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     void audio.play()
     setCurrentTrack(track)
     setIsPlaying(true)
+  }
+
+  function toggle(track: Track, newQueue?: Track[]) {
+    if (newQueue) setQueue(newQueue)
+    if (currentTrack?.id === track.id && isPlaying) {
+      audioRef.current?.pause()
+      setIsPlaying(false)
+      return
+    }
+    play(track)
+  }
+
+  function currentIndex() {
+    return queue.findIndex((t) => t.id === currentTrack?.id)
+  }
+
+  function next() {
+    const i = currentIndex()
+    if (i === -1) return
+    // Wraps last → first: one-artist catalog, keep the music going.
+    play(queue[(i + 1) % queue.length])
+  }
+
+  function prev() {
+    const audio = audioRef.current
+    if (!audio) return
+    const i = currentIndex()
+    // Standard transport behavior: more than a few seconds into a song,
+    // prev restarts it; only near the start does it go back a track.
+    if (audio.currentTime > 3 || i === -1) {
+      seekCommit(0)
+      return
+    }
+    play(queue[(i - 1 + queue.length) % queue.length])
   }
 
   function stop() {
@@ -85,15 +131,26 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     emit()
   }
 
+  function setVolume(value: number) {
+    const clamped = Math.min(1, Math.max(0, value))
+    if (audioRef.current) audioRef.current.volume = clamped
+    setVolumeState(clamped)
+    localStorage.setItem(VOLUME_KEY, String(clamped))
+  }
+
   return (
     <PlayerContext.Provider
       value={{
         currentTrack,
         isPlaying,
         toggle,
+        prev,
+        next,
         stop,
         seekChange,
         seekCommit,
+        volume,
+        setVolume,
         subscribeTime,
         getTime,
         getDuration,
@@ -104,7 +161,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           exclusivity between separate <audio> tags. */}
       <audio
         ref={audioRef}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => {
+          // Auto-advance through the queue (wrapping); a queue-less track
+          // just stops like before.
+          const i = currentIndex()
+          if (i === -1) {
+            setIsPlaying(false)
+            return
+          }
+          play(queue[(i + 1) % queue.length])
+        }}
         onTimeUpdate={() => {
           // A drag in progress owns the time until release — otherwise
           // the ~4x/second timeupdate tick yanks the slider thumb back to

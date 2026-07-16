@@ -27,18 +27,32 @@ function track(overrides: Partial<Track> = {}): Track {
 // elements — the real UI (TrackRow, NowPlayingBar) is covered by its own
 // component tests; this file tests the player logic itself.
 function Probe({ tracks }: { tracks: Track[] }) {
-  const { currentTrack, isPlaying, toggle, stop, seekCommit } = usePlayer()
+  const {
+    currentTrack,
+    isPlaying,
+    toggle,
+    prev,
+    next,
+    stop,
+    seekCommit,
+    volume,
+    setVolume,
+  } = usePlayer()
   return (
     <div>
       <p>current: {currentTrack ? currentTrack.title : 'none'}</p>
       <p>playing: {String(isPlaying)}</p>
+      <p>volume: {volume}</p>
       {tracks.map((t) => (
-        <button key={t.id} onClick={() => toggle(t)}>
+        <button key={t.id} onClick={() => toggle(t, tracks)}>
           toggle {t.title}
         </button>
       ))}
+      <button onClick={() => prev()}>prev</button>
+      <button onClick={() => next()}>next</button>
       <button onClick={() => stop()}>stop</button>
       <button onClick={() => seekCommit(60)}>seek to 60</button>
+      <button onClick={() => setVolume(0.5)}>set volume</button>
     </div>
   )
 }
@@ -55,6 +69,7 @@ function renderPlayer(tracks: Track[]) {
 
 afterEach(() => {
   Reflect.deleteProperty(HTMLMediaElement.prototype, 'src')
+  localStorage.clear()
 })
 
 describe('PlayerContext', () => {
@@ -158,6 +173,73 @@ describe('PlayerContext', () => {
 
     expect(screen.getByText('time: 42')).toBeInTheDocument()
     expect(trackProbeRenders).toBe(rendersBeforeTick)
+  })
+
+  it('next walks the queue and wraps from the last track to the first', async () => {
+    const user = userEvent.setup()
+    renderPlayer([
+      track({ id: 't1', title: 'One', audioUrl: 'https://x/1.mp3' }),
+      track({ id: 't2', title: 'Two', audioUrl: 'https://x/2.mp3' }),
+    ])
+
+    await user.click(screen.getByRole('button', { name: 'toggle One' }))
+    await user.click(screen.getByRole('button', { name: 'next' }))
+    expect(screen.getByText('current: Two')).toBeInTheDocument()
+    expect(screen.getByText('playing: true')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'next' }))
+    expect(screen.getByText('current: One')).toBeInTheDocument()
+  })
+
+  it('prev goes to the previous track near the start, restarts otherwise', async () => {
+    const user = userEvent.setup()
+    renderPlayer([
+      track({ id: 't1', title: 'One', audioUrl: 'https://x/1.mp3' }),
+      track({ id: 't2', title: 'Two', audioUrl: 'https://x/2.mp3' }),
+    ])
+
+    await user.click(screen.getByRole('button', { name: 'toggle Two' }))
+    // near the start (currentTime 0) — previous track, wrapping backwards
+    await user.click(screen.getByRole('button', { name: 'prev' }))
+    expect(screen.getByText('current: One')).toBeInTheDocument()
+
+    // more than 3s in — prev restarts the current track instead
+    const audio = document.querySelector('audio')!
+    audio.currentTime = 30
+    await user.click(screen.getByRole('button', { name: 'prev' }))
+    expect(screen.getByText('current: One')).toBeInTheDocument()
+    expect(audio.currentTime).toBe(0)
+  })
+
+  it('auto-advances to the next queue track when a song ends', async () => {
+    const user = userEvent.setup()
+    renderPlayer([
+      track({ id: 't1', title: 'One', audioUrl: 'https://x/1.mp3' }),
+      track({ id: 't2', title: 'Two', audioUrl: 'https://x/2.mp3' }),
+    ])
+
+    await user.click(screen.getByRole('button', { name: 'toggle One' }))
+    fireEvent(document.querySelector('audio')!, new Event('ended'))
+
+    expect(screen.getByText('current: Two')).toBeInTheDocument()
+    expect(screen.getByText('playing: true')).toBeInTheDocument()
+  })
+
+  it('setVolume clamps, applies to the element, and persists', async () => {
+    const user = userEvent.setup()
+    renderPlayer([track({ title: 'One' })])
+
+    await user.click(screen.getByRole('button', { name: 'set volume' }))
+
+    expect(screen.getByText('volume: 0.5')).toBeInTheDocument()
+    expect(document.querySelector('audio')?.volume).toBe(0.5)
+    expect(localStorage.getItem('player-volume')).toBe('0.5')
+  })
+
+  it('reads the persisted volume on mount', () => {
+    localStorage.setItem('player-volume', '0.25')
+    renderPlayer([track({ title: 'One' })])
+    expect(screen.getByText('volume: 0.25')).toBeInTheDocument()
   })
 
   it('usePlayer throws outside a PlayerProvider', () => {

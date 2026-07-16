@@ -70,6 +70,10 @@ function Catalog({ musicPromise }: { musicPromise: Promise<MusicPayload> }) {
   const { albums, singles } = use(musicPromise)
   const { currentTrack, isPlaying, toggle } = usePlayer()
 
+  // Everything on the page in display order — what prev/next and
+  // auto-advance walk through, regardless of which row started playback.
+  const queue = [...albums.flatMap((album) => album.tracks), ...singles]
+
   const isEmpty = albums.length === 0 && singles.length === 0
 
   if (isEmpty) {
@@ -100,7 +104,7 @@ function Catalog({ musicPromise }: { musicPromise: Promise<MusicPayload> }) {
                     key={track.id}
                     track={track}
                     playing={currentTrack?.id === track.id && isPlaying}
-                    onToggle={() => toggle(track)}
+                    onToggle={() => toggle(track, queue)}
                   />
                 ))}
               </div>
@@ -118,7 +122,7 @@ function Catalog({ musicPromise }: { musicPromise: Promise<MusicPayload> }) {
                 key={track.id}
                 track={track}
                 playing={currentTrack?.id === track.id && isPlaying}
-                onToggle={() => toggle(track)}
+                onToggle={() => toggle(track, queue)}
               />
             ))}
           </div>
