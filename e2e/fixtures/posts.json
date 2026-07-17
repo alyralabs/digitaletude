@@ -1,0 +1,26 @@
+[
+  {
+    "id": "post-1",
+    "slug": "first-post",
+    "title": "The First Post",
+    "excerpt": "Where it all begins.",
+    "contentMarkdown": "Where it all **begins**. This is fixture content for E2E tests.\n\n## Fixture section\n\nMore body text so the page has real content to render.",
+    "status": "published",
+    "createdAt": "2026-01-05T00:00:00Z",
+    "updatedAt": "2026-01-05T00:00:00Z",
+    "publishedAt": "2026-01-05T00:00:00Z",
+    "coverImagePath": "post-1/cover.png"
+  },
+  {
+    "id": "post-2",
+    "slug": "second-post",
+    "title": "A Second One",
+    "excerpt": "Follow-up thoughts.",
+    "contentMarkdown": "Follow-up thoughts, fixture body.",
+    "status": "published",
+    "createdAt": "2026-02-10T00:00:00Z",
+    "updatedAt": "2026-02-10T00:00:00Z",
+    "publishedAt": "2026-02-10T00:00:00Z",
+    "coverImagePath": null
+  }
+]

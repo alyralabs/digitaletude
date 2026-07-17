@@ -1,0 +1,56 @@
+{
+  "albums": [
+    {
+      "id": "album-1",
+      "title": "Nightdrive",
+      "description": "A four-track EP about long drives after midnight.",
+      "sortOrder": 0,
+      "createdAt": "2026-01-01T00:00:00Z",
+      "metadata": { "links": { "Spotify": "https://example.com/spotify" } },
+      "coverImagePath": "album-1/cover.png",
+      "tracks": [
+        {
+          "id": "track-1",
+          "title": "Onramp",
+          "description": "",
+          "durationSeconds": 182,
+          "albumId": "album-1",
+          "trackNumber": 1,
+          "sortOrder": 0,
+          "createdAt": "2026-01-01T00:00:00Z",
+          "metadata": {},
+          "storagePath": "album-1/onramp.wav",
+          "coverImagePath": null
+        },
+        {
+          "id": "track-2",
+          "title": "Overpass",
+          "description": "",
+          "durationSeconds": 201,
+          "albumId": "album-1",
+          "trackNumber": 2,
+          "sortOrder": 1,
+          "createdAt": "2026-01-01T00:00:00Z",
+          "metadata": {},
+          "storagePath": "album-1/overpass.wav",
+          "coverImagePath": null
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "id": "single-1",
+      "title": "Loose Ends",
+      "description": "A standalone single.",
+      "durationSeconds": 154,
+      "albumId": null,
+      "trackNumber": null,
+      "sortOrder": 0,
+      "createdAt": "2026-02-01T00:00:00Z",
+      "metadata": {},
+      "storagePath": "singles/loose-ends.wav",
+      "coverImagePath": "singles/loose-ends-cover.png"
+    }
+  ]
+}

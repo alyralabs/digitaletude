@@ -1,0 +1,26 @@
+[
+  {
+    "id": "photo-1",
+    "title": "Overlook",
+    "description": "Fixture photo one.",
+    "width": 1600,
+    "height": 1067,
+    "sortOrder": 0,
+    "createdAt": "2026-01-01T00:00:00Z",
+    "exif": { "camera": "Fixture Camera", "aperture": "f/2.8" },
+    "storagePath": "photo-1/original.png",
+    "thumbnailPath": "photo-1/thumb.png"
+  },
+  {
+    "id": "photo-2",
+    "title": "Underpass",
+    "description": "Fixture photo two.",
+    "width": 1067,
+    "height": 1600,
+    "sortOrder": 1,
+    "createdAt": "2026-01-02T00:00:00Z",
+    "exif": {},
+    "storagePath": "photo-2/original.png",
+    "thumbnailPath": "photo-2/thumb.png"
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo",
+    "target": "es2023",
+    // DOM is needed here (unlike tsconfig.node.json) because spec files
+    // reference browser globals (document, HTMLAudioElement, ...) inside
+    // page.evaluate() callbacks — those run in the browser, but tsc still
+    // type-checks the callback body as written.
+    "lib": ["ES2023", "DOM"],
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    /* Bundler mode — not nodenext: Playwright's test runner transforms
+       these files with esbuild, not the real Node ESM loader, so nodenext's
+       explicit-.js-extension-on-relative-imports rule is friction with no
+       corresponding runtime benefit here. */
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["e2e", "playwright.config.ts"]
+}
