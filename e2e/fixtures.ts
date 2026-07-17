@@ -118,24 +118,6 @@ const BENIGN_CONSOLE_ERRORS: RegExp[] = [
   // TLD's guaranteed NXDOMAIN (RFC 2606) surfaces as a console.error there.
   // WebKit-only side effect of faking the origin this way.
   /^Failed to preconnect to .*stub\.supabase\.test/,
-  // PlayerContext's play() does `void audio.play()` with no rejection
-  // handler. A pause() landing before that promise settles (a real user
-  // double-tapping play/pause, or — as found writing this suite — five
-  // parallel headless tabs contending for CPU against one shared dev
-  // server) makes the browser reject it with a harmless AbortError, which
-  // surfaces as an unhandled-rejection console.error. Confirmed a real,
-  // if minor, pre-existing gap (not a test-timing artifact: reproduces at
-  // ~1-in-7 under parallel load, never under serial runs) — worth an
-  // `audio.play().catch(() => {})` in PlayerContext.tsx, but that's a
-  // production-code fix outside this plan's stated scope, so it's flagged
-  // here rather than silently patched. Chromium phrases the rejection as
-  // "The play() request was interrupted by a call to pause()"; WebKit
-  // phrases the same DOMException as "AbortError: The operation was
-  // aborted." — same cause, worded differently per engine. No other
-  // AbortController/AbortSignal usage exists anywhere in the app (checked),
-  // so a bare AbortError match can't be masking something unrelated.
-  /^The play\(\) request was interrupted by a call to pause\(\)/,
-  /^AbortError: The operation was aborted\.?$/,
 ]
 
 const isBenignConsoleError = (text: string) =>

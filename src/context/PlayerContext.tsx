@@ -101,7 +101,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       storeRef.current.duration = null
       emit()
     }
-    void audio.play()
+    // A pause() landing before this promise settles (rapid transport
+    // clicks, or React re-rendering into another play() call) rejects it
+    // with a harmless AbortError — catch it so it doesn't surface as an
+    // unhandled rejection in the console.
+    audio.play().catch(() => {})
     setCurrentTrack(track)
     setIsPlaying(true)
   }
