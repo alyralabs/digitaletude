@@ -153,7 +153,7 @@ export default function VisualizerOverlay({
     getDuration,
     getAnalyser,
   } = usePlayer()
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const currentTime = useSyncExternalStore(subscribeTime, getTime)
   const duration = useSyncExternalStore(subscribeTime, getDuration)
   const [volumeOpen, setVolumeOpen] = useState(false)
@@ -175,8 +175,18 @@ export default function VisualizerOverlay({
   }, [onClose])
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+    const container = containerRef.current
+    if (!container) return
+
+    // The canvas is created here, not in JSX: cleanup force-loses the GL
+    // context, and getContext on a reused canvas hands back that same dead
+    // context object, which crashes the next WebGLRenderer constructor
+    // (getShaderPrecisionFormat returns null). Any effect re-run on one
+    // canvas node hits this — StrictMode's dev remount does it on open — so
+    // each run gets a fresh element and with it a fresh context.
+    const canvas = document.createElement('canvas')
+    canvas.className = 'absolute inset-0 size-full'
+    container.appendChild(canvas)
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -393,8 +403,8 @@ export default function VisualizerOverlay({
     copyScene.add(new THREE.Mesh(quadGeometry, copyMaterial))
 
     function resize() {
-      const w = canvas!.clientWidth || 1
-      const h = canvas!.clientHeight || 1
+      const w = canvas.clientWidth || 1
+      const h = canvas.clientHeight || 1
       renderer.setSize(w, h, false)
       camera.aspect = w / h
       camera.updateProjectionMatrix()
@@ -500,6 +510,7 @@ export default function VisualizerOverlay({
       // dispose() alone leaves the GL context alive until GC; browsers cap
       // ~16 contexts, so rapid open/close cycles could evict live ones.
       renderer.forceContextLoss()
+      canvas.remove()
     }
     // getAnalyser only captures a ref, so React Compiler gives it a stable
     // identity and this effect runs once per mount. If the compiler ever
@@ -514,7 +525,7 @@ export default function VisualizerOverlay({
       aria-label="Music visualizer"
       className="fixed inset-0 z-[100] bg-black"
     >
-      <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+      <div ref={containerRef} className="absolute inset-0" />
       {/* Same pill as NowPlayingBar, floating over the canvas instead of
           docked in the footer — the desktop static/docking classes don't
           apply since there's no footer slot to dock into here. */}

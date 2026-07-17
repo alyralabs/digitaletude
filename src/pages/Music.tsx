@@ -1,4 +1,4 @@
-import { Suspense, use } from 'react'
+import { Suspense, use, useState } from 'react'
 import { useLoaderData } from 'react-router'
 import { Pause } from '@primeicons/react/pause'
 import { Play } from '@primeicons/react/play'
@@ -66,6 +66,45 @@ function MusicSkeleton() {
   )
 }
 
+// Cover art with a pulsing placeholder while the image loads — browsers
+// paint the alt text into the box until the bytes arrive, which flashed on
+// every fresh load. The image sits under the placeholder at opacity 0 so
+// the alt text never shows, then fades in on load.
+function CoverArt({
+  src,
+  alt,
+  lazy,
+  className,
+}: {
+  src: string
+  alt: string
+  lazy?: boolean
+  className: string
+}) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className={`relative shrink-0 overflow-hidden ${className}`}>
+      {!loaded && (
+        <div aria-hidden className="absolute inset-0 animate-pulse bg-panel" />
+      )}
+      <img
+        // A cached image can finish before React attaches the load listener;
+        // `complete` catches that so the skeleton can't get stuck.
+        ref={(img) => {
+          if (img?.complete) setLoaded(true)
+        }}
+        src={src}
+        alt={alt}
+        loading={lazy ? 'lazy' : undefined}
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+        className={`size-full object-cover transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+      />
+    </div>
+  )
+}
+
 function Catalog({ musicPromise }: { musicPromise: Promise<MusicPayload> }) {
   const { albums, singles } = use(musicPromise)
   const { currentTrack, isPlaying, toggle } = usePlayer()
@@ -86,10 +125,10 @@ function Catalog({ musicPromise }: { musicPromise: Promise<MusicPayload> }) {
         <PageSection key={album.id} title={album.title}>
           <div className="flex flex-col gap-6 sm:flex-row">
             {album.coverUrl && (
-              <img
+              <CoverArt
                 src={album.coverUrl}
                 alt={album.title}
-                className="size-40 shrink-0 rounded-lg object-cover"
+                className="size-40 rounded-lg"
               />
             )}
             <div className="flex-1 space-y-3">
@@ -147,12 +186,11 @@ function TrackRow({
       {/* Empty placeholder square when there's no cover art, so titles in a
           mixed list stay aligned instead of shifting left per row. */}
       {track.coverUrl ? (
-        <img
+        <CoverArt
           src={track.coverUrl}
           alt={`${track.title} cover art`}
-          loading="lazy"
-          decoding="async"
-          className="size-14 shrink-0 rounded-md border border-surface object-cover"
+          lazy
+          className="size-14 rounded-md border border-surface"
         />
       ) : (
         <div className="size-14 shrink-0 rounded-md border border-surface bg-panel" />

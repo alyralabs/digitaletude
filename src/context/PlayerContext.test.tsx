@@ -242,6 +242,33 @@ describe('PlayerContext', () => {
     expect(screen.getByText('volume: 0.25')).toBeInTheDocument()
   })
 
+  it('keeps getAnalyser referentially stable across play/pause re-renders', async () => {
+    // VisualizerOverlay's scene effect depends on [getAnalyser]. If its
+    // identity changes on a player state flip (e.g. React Compiler bailing
+    // out on PlayerProvider), pausing tears down and rebuilds the WebGL
+    // scene on a force-lost context — the visualizer goes black.
+    const user = userEvent.setup()
+    const seen = new Set<unknown>()
+    function AnalyserProbe() {
+      const { getAnalyser } = usePlayer()
+      seen.add(getAnalyser)
+      return null
+    }
+    HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined)
+    HTMLMediaElement.prototype.pause = vi.fn()
+    render(
+      <PlayerProvider>
+        <Probe tracks={[track({ title: 'One' })]} />
+        <AnalyserProbe />
+      </PlayerProvider>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'toggle One' }))
+    await user.click(screen.getByRole('button', { name: 'toggle One' }))
+
+    expect(seen.size).toBe(1)
+  })
+
   it('usePlayer throws outside a PlayerProvider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
     expect(() => render(<Probe tracks={[]} />)).toThrow(

@@ -131,12 +131,25 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     play(queue[(i + 1) % queue.length])
   }
 
+  function seekCommit(value: number) {
+    const audio = audioRef.current
+    if (audio) audio.currentTime = value
+    storeRef.current.scrubbing = false
+    storeRef.current.time = value
+    emit()
+  }
+
   function prev() {
     const audio = audioRef.current
     if (!audio) return
     const i = currentIndex()
     // Standard transport behavior: more than a few seconds into a song,
     // prev restarts it; only near the start does it go back a track.
+    // seekCommit is declared above because React Compiler bails out on the
+    // whole component when a hoisted function is referenced before its
+    // declaration ("[PruneHoistedContexts]" Todo) — and that bailout
+    // un-memoizes getAnalyser, which VisualizerOverlay's scene effect keys
+    // on, so every play/pause rebuilt the WebGL scene on a dead context.
     if (audio.currentTime > 3 || i === -1) {
       seekCommit(0)
       return
@@ -152,14 +165,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   function seekChange(value: number) {
     storeRef.current.scrubbing = true
-    storeRef.current.time = value
-    emit()
-  }
-
-  function seekCommit(value: number) {
-    const audio = audioRef.current
-    if (audio) audio.currentTime = value
-    storeRef.current.scrubbing = false
     storeRef.current.time = value
     emit()
   }
